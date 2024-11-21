@@ -21,7 +21,7 @@
 #     name: python
 #     nbconvert_exporter: python
 #     pygments_lexer: ipython3
-#     version: 3.10.13
+#     version: 3.11.7
 # ---
 
 # %% [markdown]
@@ -183,6 +183,6 @@ legend = {
 ax_legend.legend(handles=legend.values(), labels=legend.keys(), loc='center', ncol=3)
 ax_legend.axis('off')
 plt.subplots_adjust(top=1e-6, bottom=0)
-fig_legend.savefig("results/legend.png", bbox_inches='tight')
+fig_legend.savefig(OUTPUT / "legend.png", bbox_inches='tight')
 
 plt.show()
