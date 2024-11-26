@@ -25,7 +25,7 @@
 # ---
 
 # %% [markdown]
-# # Figures
+# # Script for Figures 2 and 3 of the manuscript
 
 # %% editable=true slideshow={"slide_type": ""}
 import pandas as pd
