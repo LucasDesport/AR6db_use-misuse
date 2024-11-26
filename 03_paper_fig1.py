@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # Script to plot Figure 1 of the paper
+# # Script to plot Figure 1 of the manuscript
 # Figure 1 represents the temperature evolution (50<sup>th</sup> percentile of AR6 climate diagnostics) of the 97 scenarios of C1, compared to the temperature output of MAGICC ([Meinshausen et al., 2021](https://magicc.org/)) when submitting the combined emissions pathway for the median, 50<sup>th</sup> and 95<sup>th</sup> centiles. Users can leverage the code to replicate the figure with other categories.
 
 # %%

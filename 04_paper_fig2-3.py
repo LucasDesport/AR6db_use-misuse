@@ -25,7 +25,7 @@
 # ---
 
 # %% [markdown]
-# # Script for Figures 2 and 3 of the manuscript
+# # Script for Figure 2 and Figure 3 of the manuscript
 
 # %% editable=true slideshow={"slide_type": ""}
 import pandas as pd
@@ -36,31 +36,34 @@ import matplotlib.patheffects as mpe
 import scienceplots
 import pathlib
 
-DATADIR = pathlib.Path('data')
+DATADIR = pathlib.Path('outputs')
 OUTPUT = pathlib.Path('figures')
 
 mpl.style.use(["science", "nature"])
 
 # %%
+# Import the values to be plotted
 df = pd.read_csv(DATADIR / 'tiam-fr_vs_constraints.csv', parse_dates=['Year'])
 
-filtered = ['base']
+filtered = ['base'] # Removes the 'base' scenario as it matches the median trajectory
 df = df[~df['Scenario'].isin(filtered)]
 
+# Maps different groups
 gmap = {
     r'^IMP-.*': 'imp',
-    r'Median|\d+th|base': 'stat',
-    r'^[bgc].*|tab2': 'emissions',
-    r'^[nf].*|tab4': 'energy',
+    r'Median|\d+th|base': 'stat',  # groups the median and the 5th and 95th percentiles
+    r'^[bgc].*|tab2': 'emissions',  # groups the pathways constrained by a combination of median pathways related to GHG (see Table 2 of the manuscript)
+    r'^[nf].*|tab4': 'energy', # groups the pathways constrained by a combination of median pathways related to energy (see Table 3 of the manuscript)
 }
 df['Group'] = df['Scenario'].replace(gmap, regex=True)
 
 # %% [markdown]
-# ### Règles d'affichage
+# ## Plotting rules
 #
-# La médiane et les IMP-* sont toujours au dessus de toutes les autres courbes. Les faisceaux sont toujours en dessous : 5-95th < budget < energy < trend
+# The median and IMP-* are always above all the other curves. The beams are always below: 5-95th < budget < energy < trend
 
 # %% editable=true slideshow={"slide_type": ""}
+# X and Y axis labels
 chart_elements = {
     'ghg': {'title': 'GHG emissions', 'ylabel': 'GtCO$_{2,eq}$', 'fig_id': None},
     'lcspe': {'title': 'Low-carbon share of primary energy', 'ylabel': 'Ratio', 'fig_id': 'a'},
@@ -78,7 +81,7 @@ kwds = {
     "emissions": {"color": "lightblue", "linewidth": 0.8, "linestyle": "dotted"},
     "energy": {"color": "lightcoral", "linewidth": 0.8, "linestyle": "dotted"},
 
-    # Groupe STAT
+    # Group STAT
     'Median': {"color": "black", "linewidth": 1.5, "linestyle": "solid"},
     '5th': {"color": "gray", "linewidth": 0.5, "linestyle": "dotted"},
     '95th':  {"color": "gray", "linewidth": 0.5, "linestyle": "dotted"},
@@ -116,24 +119,24 @@ def make_plot(var, df, fig_id):
     lines = {}
     area = {}
     
-    # Groupe STAT
+    # STAT group
     df1 = grp.get_group('stat').droplevel('Group')
     lines['Median'] = ax.plot(df1.loc['Median'], **(kwds['stat'] | kwds['Median']))
     lines['5th'] = ax.plot(df1.loc['5th'], **(kwds['stat'] | kwds['5th']))
     lines['95th'] = ax.plot(df1.loc['95th'], **(kwds['stat'] | kwds['95th']))
     area['stat'] = ax.fill_between(df1.columns, df1.loc['5th'], df1.loc['95th'], color=kwds["stat"]["color"], alpha=0.5)
     
-    # Groupe IMP
+    # IMP group
     df1 = grp.get_group('imp').droplevel('Group')
     for scen, data in df1.iterrows():
         lines[scen] = ax.plot(data, **(kwds['imp'] | kwds[scen]))
     
-    # Groupe ENERGY
+    # ENERGY group
     df1 = grp.get_group('energy').droplevel('Group')
     area['energy'] = ax.fill_between(df1.columns, df1.min(axis=0), df1.max(axis=0), color=kwds["energy"]["color"], alpha=0.5)
     lines['tab4'] = ax.plot(df1.loc['tab4'], **(kwds['energy'] | kwds['tab4']))
     
-    # Groupe EMISSIONS
+    # EMISSIONS group
     df1 = grp.get_group('emissions').droplevel('Group')
     area['emissions'] = ax.fill_between(df1.columns, df1.min(axis=0), df1.max(axis=0), color=kwds["emissions"]["color"], alpha=0.5)
     lines['tab2'] = ax.plot(df1.loc['tab2'], **(kwds['emissions'] | kwds['tab2']))
@@ -150,13 +153,15 @@ def make_plot(var, df, fig_id):
 # %% editable=true slideshow={"slide_type": ""}
 OUTPUT.mkdir(exist_ok=True)
 
-#for var in chart_elements:
 for var in chart_elements:
     subdf = df[['Scenario', 'Year', 'Group', var]].copy()
 
     fig, ax = make_plot(var, subdf, chart_elements[var].get('fig_id'))
     fig.savefig(OUTPUT / f"{var}.png", bbox_inches='tight')
     plt.show()
+
+# %% [markdown]
+# # Plot the legend
 
 # %%
 from matplotlib.lines import Line2D

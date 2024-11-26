@@ -312,10 +312,12 @@ nonnrg = df.loc[df['Variable'].isin(var)]
 nonnrg = pd.pivot_table(nonnrg, columns='Variable', index=['Model','Scenario','Year'], values='Value').reset_index().rename_axis(columns=None)
 nonnrg['Value'] = nonnrg['Emissions|CO2'] - nonnrg['Emissions|CO2|Energy'] + (nonnrg['Emissions|CH4'] - nonnrg['Emissions|CH4|Energy'])*29.8 + (nonnrg['Emissions|N2O'] - nonnrg['Emissions|N2O|Energy'])*273/1000 + nonnrg['Emissions|F-Gases']
 
+
 # %%
 # Extract the values for IMPs only
 nonnrg_imp = nonnrg.loc[nonnrg['Scenario'].isin(IMP_Scen), ['Model','Scenario', 'Year', 'Value']]
 nonnrg_imp['Scenario'] = nonnrg_imp['Scenario'].replace(IMP)
+nonnrg_imp = nonnrg_imp.drop(columns=['Model'])
 
 # %%
 #Calculates the median and the 5th and 95th percentiles
@@ -342,3 +344,5 @@ dfs = {'ghg': ghg, 'lcspe': lcspe, 'fed': fed, 'esfe': esfe,
 out = (pd.concat(dfs, names=['Variable']).reset_index('Variable')
         .pivot_table(index=['Scenario', 'Year'], columns='Variable', values='Value'))
 out.to_csv(DATADIROUT / 'constraints.csv')
+
+# %%
