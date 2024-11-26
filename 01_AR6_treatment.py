@@ -18,9 +18,14 @@
 # The [AR6 Scenarios Database](https://data.ece.iiasa.ac.at/ar6/#/workspaces) ([Byers et al., 2022](https://data.ece.iiasa.ac.at/ar6/#)) is imported with to retrieve the statistical values of Tables 3.2 and Table 3.4 from IPCC AR6 WGIII Chapter 3 ([Riahi et al., 2023](https://www.cambridge.org/core/books/climate-change-2022-mitigation-of-climate-change/mitigation-pathways-compatible-with-longterm-goals/7C750344E39ECA3BD5CB14156FCEEFE9)). The user can choose which category of scenarios to extract.
 
 # %%
+import pathlib
 import pandas as pd
 import os
 
+DATADIR = pathlib.Path('data')
+
+
+# %%
 def load_data(category, variables):
     """Imports the database of scenarios and their variables according to the category entered by the user.
 
@@ -152,6 +157,7 @@ esfe = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Valu
 esfe = pd.merge(esfe, esfe_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -160,6 +166,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         esfe.to_excel(writer, sheet_name="esfe", index=False)
+"""
 
 # %% [markdown]
 # # Greenhouse gases (GHG)
@@ -187,6 +194,7 @@ ghg = pd.merge(ghg, ghg_imp, how='outer', sort='Scenario').sort_values(by=['Scen
 ghg['Value'] = ghg['Value'].round(0)/1000
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -195,6 +203,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         ghg.to_excel(writer, sheet_name="ghg", index=False)
+"""
 
 # %% [markdown]
 # # Final energy demand (FED)
@@ -222,6 +231,7 @@ fed = pd.merge(fed, fed_imp, how='outer', sort='Scenario').sort_values(by=['Scen
 fed['Value'] = fed['Value'].round(0)
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -230,6 +240,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         fed.to_excel(writer, sheet_name="fed", index=False)
+"""
 
 # %% [markdown]
 # # Fossil CO<sub>2</sub> (CCSFOS)
@@ -257,6 +268,7 @@ ccsfos = pd.merge(ccsfos, ccsfos_imp, how='outer', sort='Scenario').sort_values(
 ccsfos['Value'] = ccsfos['Value'].round(0)/1000
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -265,6 +277,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         ccsfos.to_excel(writer, sheet_name="ccsfos", index=False)
+"""
 
 # %% [markdown]
 # # CO<sub>2</sub> intensity of electricity (CO2ELC)
@@ -298,6 +311,7 @@ co2elc = pd.merge(co2elc, co2elc_imp, how='outer', sort='Scenario').sort_values(
 co2elc = co2elc.dropna(how='any')
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -306,6 +320,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         co2elc.to_excel(writer, sheet_name="co2elc", index=False)
+"""
 
 # %% [markdown]
 # # Low-carbon share of primary energy (LCSPE)
@@ -342,6 +357,7 @@ lcspe = pd.merge(lcspe, lcspe_imp, how='outer', sort='Scenario').sort_values(by=
 lcspe = lcspe.dropna(how='any')
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -350,6 +366,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         lcspe.to_excel(writer, sheet_name="lcspe", index=False)
+"""
 
 # %% [markdown]
 # # Non-energy GHG emissions (NONNRG)
@@ -386,6 +403,7 @@ nonnrg = nonnrg.dropna(how='any')
 nonnrg['Value'] = nonnrg['Value'].round(0)/1000
 
 # %%
+"""
 if os.path.exists(file_name):
     # File exists, use append mode and if_sheet_exists option
     with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
@@ -394,6 +412,7 @@ else:
     # File does not exist, create a new file without if_sheet_exists
     with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
         nonnrg.to_excel(writer, sheet_name="nonnrg", index=False)
+"""
 
 # %% [markdown]
 # # CSV output
@@ -403,4 +422,4 @@ dfs = {'ghg': ghg, 'lcspe': lcspe, 'fed': fed, 'esfe': esfe,
        'co2elc': co2elc, 'ccsfos': ccsfos, 'nonnrg': nonnrg}
 out = (pd.concat(dfs, names=['Variable']).reset_index('Variable')
         .pivot_table(index=['Scenario', 'Year'], columns='Variable', values='Value'))
-out.to_csv('constraints.csv')
+out.to_csv(DATADIR / 'constraints.csv')

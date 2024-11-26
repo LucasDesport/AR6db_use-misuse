@@ -4,6 +4,7 @@ import pathlib
 import sqlite3
 
 DATADIR = pathlib.Path('data')
+DATADIROUT = pathlib.Path('outputs')
 conn = sqlite3.connect(DATADIR / 'c1.db')
 
 # %% [markdown]
@@ -267,4 +268,4 @@ dfs = {'ghg': df_ghg, 'lcspe': df_lcspe, 'fed': df_fed, 'esfe': df_esfe,
 
 df = pd.concat({var: df.loc[df['Year'] != '2018'].set_index(['Scenario', 'Year'])['Value'] for var, df in dfs.items()}, axis=1)
 df = pd.concat([constraints, df], axis=0, sort=False)[dfs.keys()]
-df.to_csv(DATADIR / 'tiam-fr_vs_constraints.csv')
+df.to_csv(DATADIROUT / 'tiam-fr_vs_constraints.csv')
