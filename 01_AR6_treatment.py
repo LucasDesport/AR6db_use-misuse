@@ -15,14 +15,14 @@
 
 # %% [markdown]
 # # Script to compute the AR6 Scenarios Database
-# The [AR6 Scenarios Database](https://data.ece.iiasa.ac.at/ar6/#/workspaces) ([Byers et al., 2022](https://data.ece.iiasa.ac.at/ar6/#)) is imported with to retrieve the statistical values of Tables 3.2 and Table 3.4 from IPCC AR6 WGIII Chapter 3 ([Riahi et al., 2023](https://www.cambridge.org/core/books/climate-change-2022-mitigation-of-climate-change/mitigation-pathways-compatible-with-longterm-goals/7C750344E39ECA3BD5CB14156FCEEFE9)). The user can choose which category of scenarios to extract.
+# The [AR6 Scenarios Database](https://data.ece.iiasa.ac.at/ar6/#/workspaces) ([Byers et al., 2022](https://data.ece.iiasa.ac.at/ar6/#)) is imported to retrieve the statistical values of Tables 3.2 and Table 3.4 from IPCC AR6 WGIII Chapter 3 ([Riahi et al., 2023](https://www.cambridge.org/core/books/climate-change-2022-mitigation-of-climate-change/mitigation-pathways-compatible-with-longterm-goals/7C750344E39ECA3BD5CB14156FCEEFE9)). The user can choose which scenarios' category to extract.
 
 # %%
 import pathlib
 import pandas as pd
 import os
 
-DATADIR = pathlib.Path('data')
+DATADIROUT = pathlib.Path('outputs')
 
 
 # %%
@@ -83,7 +83,7 @@ def load_IMP(category):
 # The following variables are either those given in Tables 3.2 and 3.4 of IPCC AR6 WGIII Chapter 3 (([Riahi et al., 2023](https://www.cambridge.org/core/books/climate-change-2022-mitigation-of-climate-change/mitigation-pathways-compatible-with-longterm-goals/7C750344E39ECA3BD5CB14156FCEEFE9)) or are furtherly computed to retrieve these variables.
 
 # %%
-# AR6 variables to be processed
+# AR6 variables to be processed.
 variables = ['AR6 climate diagnostics|Infilled|Emissions|Kyoto Gases (AR6-GWP100)',
              'Final Energy',
              'Final Energy|Electricity',
@@ -119,17 +119,16 @@ variables = ['AR6 climate diagnostics|Infilled|Emissions|Kyoto Gases (AR6-GWP100
 category = 'C1'
 df = load_data(category,variables)
 IMP_Scen, IMP = load_IMP(category)
-file_name = "constraints.xlsx"
 
 # %%
-# Check if the number of scenarios match IPCC records
+# Check that the number of scenarios within the explored category matches the IPCC records.s
 df[['Model', 'Scenario']].drop_duplicates().shape[0]
 
 # %% [markdown]
-# # Electricity share of final energy (ESFE)
+# ## Electricity share of final energy (ESFE)
 
 # %%
-# Filter only necessary variables
+# Filter necessary variables to compute the ratio of electricity in final energy demand globally
 var = ['Final Energy', 'Final Energy|Electricity']
 esfe = df.loc[df['Variable'].isin(var)]
 
@@ -138,7 +137,6 @@ esfe = df.loc[df['Variable'].isin(var)]
 esfe = pd.pivot_table(esfe, columns='Variable', index=['Model','Scenario','Year'], values='Value').reset_index().rename_axis(columns=None)
 esfe['Value']=esfe['Final Energy|Electricity']/esfe['Final Energy']
 esfe = esfe.drop(columns=['Final Energy','Final Energy|Electricity'])
-esfe.sample(10)
 
 # %%
 # Extract the values for IMPs only
@@ -156,23 +154,11 @@ esfe = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Valu
 # Merge the centiles with the IMPs
 esfe = pd.merge(esfe, esfe_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
 
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        esfe.to_excel(writer, sheet_name="esfe", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        esfe.to_excel(writer, sheet_name="esfe", index=False)
-"""
-
 # %% [markdown]
-# # Greenhouse gases (GHG)
+# ## Greenhouse gases (GHG)
 
 # %%
-# Filter only necessary variables
+# Filter only the necessary variable for GHG emissions
 var = ['AR6 climate diagnostics|Infilled|Emissions|Kyoto Gases (AR6-GWP100)']
 ghg = df.loc[df['Variable'].isin(var)]
 
@@ -182,7 +168,7 @@ ghg_imp = ghg.loc[ghg['Scenario'].isin(IMP_Scen), ['Scenario', 'Year', 'Value']]
 ghg_imp['Scenario'] = ghg_imp['Scenario'].replace(IMP)
 
 # %%
-#Calculates the median and the 5th and 95th percentiles
+# Calculates the median and the 5th and 95th percentiles
 centiles = ghg.groupby(['Year'])['Value'].quantile([0.05, 0.50, 0.95]).unstack(level=-1).reset_index()
 centiles.columns = ['Year', '5th', 'Median', '95th']
 centiles
@@ -191,25 +177,13 @@ ghg = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Value
 # %%
 # Merge the centiles with the IMPs
 ghg = pd.merge(ghg, ghg_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
-ghg['Value'] = ghg['Value'].round(0)/1000
-
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        ghg.to_excel(writer, sheet_name="ghg", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        ghg.to_excel(writer, sheet_name="ghg", index=False)
-"""
+ghg['Value'] = ghg['Value'].round(0)/1000 # to obtain values in Gt
 
 # %% [markdown]
-# # Final energy demand (FED)
+# ## Final energy demand (FED)
 
 # %%
-# Filter only necessary variables
+# Filter only the necessary variable
 var = ['Final Energy']
 fed = df.loc[df['Variable'].isin(var)]
 
@@ -230,23 +204,11 @@ fed = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Value
 fed = pd.merge(fed, fed_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
 fed['Value'] = fed['Value'].round(0)
 
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        fed.to_excel(writer, sheet_name="fed", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        fed.to_excel(writer, sheet_name="fed", index=False)
-"""
-
 # %% [markdown]
-# # Fossil CO<sub>2</sub> (CCSFOS)
+# ## Fossil CO<sub>2</sub> (CCSFOS)
 
 # %%
-# Filter only necessary variables
+# Filter only the necessary variable
 var = ['Carbon Sequestration|CCS|Fossil']
 ccsfos = df.loc[df['Variable'].isin(var)]
 
@@ -256,7 +218,7 @@ ccsfos_imp = ccsfos.loc[ccsfos['Scenario'].isin(IMP_Scen), ['Scenario', 'Year', 
 ccsfos_imp['Scenario'] = ccsfos_imp['Scenario'].replace(IMP)
 
 # %%
-#Calculates the median and the 5th and 95th percentiles
+# Calculates the median and the 5th and 95th percentiles
 centiles = ccsfos.groupby(['Year'])['Value'].quantile([0.05, 0.50, 0.95]).unstack(level=-1).reset_index()
 centiles.columns = ['Year', '5th', 'Median', '95th']
 centiles
@@ -265,25 +227,13 @@ ccsfos = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Va
 # %%
 # Merge the centiles with the IMPs
 ccsfos = pd.merge(ccsfos, ccsfos_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
-ccsfos['Value'] = ccsfos['Value'].round(0)/1000
-
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        ccsfos.to_excel(writer, sheet_name="ccsfos", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        ccsfos.to_excel(writer, sheet_name="ccsfos", index=False)
-"""
+ccsfos['Value'] = ccsfos['Value'].round(0)/1000 # to obtain values in Gt
 
 # %% [markdown]
-# # CO<sub>2</sub> intensity of electricity (CO2ELC)
+# ## CO<sub>2</sub> intensity of electricity (CO2ELC)
 
 # %%
-# Filter only necessary variables
+# Filter variables needed to calculate the ratio of carbon content of electricity to electricity generation
 var = ['Secondary Energy|Electricity','Emissions|CO2|Energy|Supply|Electricity']
 co2elc = df.loc[df['Variable'].isin(var)]
 
@@ -310,23 +260,12 @@ co2elc = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Va
 co2elc = pd.merge(co2elc, co2elc_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
 co2elc = co2elc.dropna(how='any')
 
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        co2elc.to_excel(writer, sheet_name="co2elc", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        co2elc.to_excel(writer, sheet_name="co2elc", index=False)
-"""
-
 # %% [markdown]
-# # Low-carbon share of primary energy (LCSPE)
+# ## Low-carbon share of primary energy (LCSPE)
+# According to IPCC AR6, the low-carbon share of energy includes *renewables (including biomass, solar, wind, hydro, geothermal, ocean); fossil fuels when used with CCS; and, nuclear power.*
 
 # %%
-# Filter only necessary variables
+# Filter variables needed to calculate the low-carbon share of primary energy
 var = ['Primary Energy','Primary Energy|Fossil|w/ CCS','Primary Energy|Nuclear','Primary Energy|Renewables (incl. Biomass)']
 lcspe = df.loc[df['Variable'].isin(var)]
 
@@ -356,20 +295,9 @@ lcspe = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Val
 lcspe = pd.merge(lcspe, lcspe_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
 lcspe = lcspe.dropna(how='any')
 
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        lcspe.to_excel(writer, sheet_name="lcspe", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        lcspe.to_excel(writer, sheet_name="lcspe", index=False)
-"""
-
 # %% [markdown]
-# # Non-energy GHG emissions (NONNRG)
+# ## Non-energy GHG emissions (NONNRG)
+# To retrieve non-energy GHG emissions the energy-related GHG emissions are deducted from the total GHG emissions, using IPCC AR6 global warming potentials to convert each GHG in CO<sub>2eq</sub>.
 
 # %%
 # Filter only necessary variables
@@ -400,26 +328,17 @@ nonnrg = pd.melt(centiles, id_vars=['Year'], var_name='Scenario', value_name='Va
 # Merge the centiles with the IMPs
 nonnrg = pd.merge(nonnrg, nonnrg_imp, how='outer', sort='Scenario').sort_values(by=['Scenario','Year'], ascending=[False, True])
 nonnrg = nonnrg.dropna(how='any')
-nonnrg['Value'] = nonnrg['Value'].round(0)/1000
-
-# %%
-"""
-if os.path.exists(file_name):
-    # File exists, use append mode and if_sheet_exists option
-    with pd.ExcelWriter(file_name, mode="a", engine="openpyxl", if_sheet_exists="overlay") as writer:
-        nonnrg.to_excel(writer, sheet_name="nonnrg", index=False)
-else:
-    # File does not exist, create a new file without if_sheet_exists
-    with pd.ExcelWriter(file_name, mode="w", engine="openpyxl") as writer:
-        nonnrg.to_excel(writer, sheet_name="nonnrg", index=False)
-"""
+nonnrg['Value'] = nonnrg['Value'].round(0)/1000 # to obtain values in Gt
 
 # %% [markdown]
-# # CSV output
+# ## CSV output
+
+# %% [markdown]
+# The file *constraints.csv* in thr output of this script becomes the input of the next script *02_tiam-fr_vs_constraints.py*
 
 # %%
 dfs = {'ghg': ghg, 'lcspe': lcspe, 'fed': fed, 'esfe': esfe,
        'co2elc': co2elc, 'ccsfos': ccsfos, 'nonnrg': nonnrg}
 out = (pd.concat(dfs, names=['Variable']).reset_index('Variable')
         .pivot_table(index=['Scenario', 'Year'], columns='Variable', values='Value'))
-out.to_csv(DATADIR / 'constraints.csv')
+out.to_csv(DATADIROUT / 'constraints.csv')
