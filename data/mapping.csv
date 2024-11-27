@@ -1,0 +1,699 @@
+Commodity;Label
+BIOARSH;Low-carbon
+BIOARSP;Low-carbon
+BIOBIN;Low-carbon
+BIOBMU;Low-carbon
+BIOCRP;Low-carbon
+BIOLOG;Low-carbon
+BIOOIL;Low-carbon
+BIOPRC;Low-carbon
+BIOWOOD;Low-carbon
+GEO;Low-carbon
+HYD;Low-carbon
+ELCNUC;Low-carbon
+SOL;Low-carbon
+ELCTDL;Low-carbon
+ELCWAV;Low-carbon
+WIN;Low-carbon
+COABCO;Fossil
+COAHCO;Fossil
+GASNGA;Fossil
+MWSTNR;Fossil
+OILCRD;Fossil
+OILNGL;Fossil
+ECOAGENCC;FFCCS_PRC
+EGASGENCC;FFCCS_PRC
+EZCCGT120;FFCCS_PRC
+EZCCGT121;FFCCS_PRC
+EZCCGT122;FFCCS_PRC
+EZCCGT123;FFCCS_PRC
+EZCCGT124;FFCCS_PRC
+EZCCGT125;FFCCS_PRC
+EZCOABIOCCOPEL10CO;FFCCS_PRC
+EZCOABIOCCOPEL10PAR;FFCCS_PRC
+EZCOABIOCCOPEL10SEP;FFCCS_PRC
+EZCOABIOCCOPEL20PAR;FFCCS_PRC
+EZCOABIOCCOPEL20SEP;FFCCS_PRC
+EZCOABIOCCOSLD10PAR;FFCCS_PRC
+EZCOABIOCCOSLD10SEP;FFCCS_PRC
+EZCOABIOCCOSLD20PAR;FFCCS_PRC
+EZCOABIOCCOSLD20SEP;FFCCS_PRC
+EZCOABIOCCOSLD40PAR;FFCCS_PRC
+EZCOABIOCCOSLD5CO;FFCCS_PRC
+EZCOABIOPULPEL10CO;FFCCS_PRC
+EZCOABIOPULPEL10PAR;FFCCS_PRC
+EZCOABIOPULPEL10SEP;FFCCS_PRC
+EZCOABIOPULPEL20PAR;FFCCS_PRC
+EZCOABIOPULPEL20SEP;FFCCS_PRC
+EZCOABIOPULPEL40PAR;FFCCS_PRC
+EZCOABIOPULSLD10PAR;FFCCS_PRC
+EZCOABIOPULSLD10SEP;FFCCS_PRC
+EZCOABIOPULSLD20PAR;FFCCS_PRC
+EZCOABIOPULSLD20SEP;FFCCS_PRC
+EZCOABIOPULSLD40PAR;FFCCS_PRC
+EZCOABIOPULSLD5CO;FFCCS_PRC
+EZCOABIOPULTOR10CO;FFCCS_PRC
+EZCOABIOPULTOR10PAR;FFCCS_PRC
+EZCOABIOPULTOR10SEP;FFCCS_PRC
+EZCOABIOPULTOR20CO;FFCCS_PRC
+EZCOABIOPULTOR20PAR;FFCCS_PRC
+EZCOABIOPULTOR20SEP;FFCCS_PRC
+EZCOABIOPULTOR40CO;FFCCS_PRC
+EZCOABIOPULTOR40PAR;FFCCS_PRC
+EZCOABIOPULTOR40SEP;FFCCS_PRC
+EZIGC1120;FFCCS_PRC
+EZOCOA120;FFCCS_PRC
+EZOCOA121;FFCCS_PRC
+EZOCOA122;FFCCS_PRC
+EZPCOA120;FFCCS_PRC
+EZPCOA121;FFCCS_PRC
+EZPCOA122;FFCCS_PRC
+EZPCOA128;FFCCS_PRC
+EZPCOA129;FFCCS_PRC
+HZHCO100;FFCCS_PRC
+HZNGA100;FFCCS_PRC
+IISBCHCKBFCS01;FFCCS_PRC
+IISCHRCAUD01;FFCCS_PRC
+IISCHRCOAMXCS01;FFCCS_PRC
+IISCOABFCS01;FFCCS_PRC
+IISCRXCS01;FFCCS_PRC
+IISCRXCS02;FFCCS_PRC
+IISNGASBFCS01;FFCCS_PRC
+IISNGBGUD01;FFCCS_PRC
+IISNGBSNGMXCS01;FFCCS_PRC
+INMGASMIXCC;FFCCS_PRC
+INMGASMIXPCC;FFCCS_PRC
+INMLIQMIXCC;FFCCS_PRC
+INMLIQMIXPCC;FFCCS_PRC
+INMSLDMIXCC;FFCCS_PRC
+INMSLDMIXPCC;FFCCS_PRC
+UFTDST_COACCS;FFCCS_PRC
+UFTHFO_COACCS;FFCCS_PRC
+UFTJTK_COACCS;FFCCS_PRC
+ELCCOA;FFCCS
+ELCNGA;FFCCS
+INDBFG;FFCCS
+INDCOA;FFCCS
+INDCOG;FFCCS
+INDCOK;FFCCS
+INDHFO;FFCCS
+INDLPG;FFCCS
+INDMWST;FFCCS
+INDNGA;FFCCS
+INDOIL;FFCCS
+INDOVC;FFCCS
+INDPTC;FFCCS
+SUPCOA;FFCCS
+SUPNGA;FFCCS
+AGR000;Final energy process
+CCKBIO000;Final energy process
+CCKBIO005;Final energy process
+CCKCOA000;Final energy process
+CCKCOA005;Final energy process
+CCKDST000;Final energy process
+CCKDST005;Final energy process
+CCKELC000;Final energy process
+CCKELC005;Final energy process
+CCKKER000;Final energy process
+CCKKER005;Final energy process
+CCKLPG000;Final energy process
+CCKLPG005;Final energy process
+CCKNGA000;Final energy process
+CCKNGA005;Final energy process
+CCKSOL000;Final energy process
+CCKSOL005;Final energy process
+CHWBIO000;Final energy process
+CHWBIO005;Final energy process
+CHWCOA000;Final energy process
+CHWCOA005;Final energy process
+CHWDSA005;Final energy process
+CHWDST000;Final energy process
+CHWDST005;Final energy process
+CHWELA005;Final energy process
+CHWELB005;Final energy process
+CHWELC000;Final energy process
+CHWELC005;Final energy process
+CHWELD005;Final energy process
+CHWGEO000;Final energy process
+CHWHET000;Final energy process
+CHWHET005;Final energy process
+CHWHFO000;Final energy process
+CHWKER000;Final energy process
+CHWKER005;Final energy process
+CHWLPG000;Final energy process
+CHWLPG005;Final energy process
+CHWNGA000;Final energy process
+CHWNGA005;Final energy process
+CHWNGB005;Final energy process
+CHWSOD005;Final energy process
+CHWSOL000;Final energy process
+CHWSOL005;Final energy process
+CLACFL000;Final energy process
+CLACFL005;Final energy process
+CLAFLA005;Final energy process
+CLAFLB010;Final energy process
+CLAFLE000;Final energy process
+CLAFLE005;Final energy process
+CLAHAE000;Final energy process
+CLAHAE005;Final energy process
+CLAHID000;Final energy process
+CLAHID005;Final energy process
+CLAICE000;Final energy process
+CLAICE005;Final energy process
+CLAKER000;Final energy process
+CLAKER005;Final energy process
+CLASUL005;Final energy process
+COEELC000;Final energy process
+COEELC005;Final energy process
+COTDST000;Final energy process
+COTDST005;Final energy process
+COTELC000;Final energy process
+COTELC005;Final energy process
+COTNGA000;Final energy process
+COTNGA005;Final energy process
+CRFELC000;Final energy process
+CRFELC005;Final energy process
+CSCCAE000;Final energy process
+CSCDST000;Final energy process
+CSCDST005;Final energy process
+CSCDST015;Final energy process
+CSCECE000;Final energy process
+CSCEHP000;Final energy process
+CSCELA005;Final energy process
+CSCELB005;Final energy process
+CSCELC005;Final energy process
+CSCELD005;Final energy process
+CSCELE010;Final energy process
+CSCELF005;Final energy process
+CSCELG005;Final energy process
+CSCELH005;Final energy process
+CSCELI005;Final energy process
+CSCELJ005;Final energy process
+CSCELK005;Final energy process
+CSCELR005;Final energy process
+CSCGEO000;Final energy process
+CSCNGA000;Final energy process
+CSCNGA005;Final energy process
+CSCNGB005;Final energy process
+CSCNGC005;Final energy process
+CSCRAE000;Final energy process
+CSHBIO000;Final energy process
+CSHBIO005;Final energy process
+CSHCOA000;Final energy process
+CSHCOA005;Final energy process
+CSHDSA005;Final energy process
+CSHDSB010;Final energy process
+CSHDSD005;Final energy process
+CSHDSO005;Final energy process
+CSHDST000;Final energy process
+CSHDST005;Final energy process
+CSHEHP000;Final energy process
+CSHEHP005;Final energy process
+CSHELB005;Final energy process
+CSHELD005;Final energy process
+CSHELE010;Final energy process
+CSHERS000;Final energy process
+CSHERS005;Final energy process
+CSHGEO000;Final energy process
+CSHHET000;Final energy process
+CSHHET005;Final energy process
+CSHHFO000;Final energy process
+CSHKER000;Final energy process
+CSHKER005;Final energy process
+CSHLPG000;Final energy process
+CSHLPG005;Final energy process
+CSHNFN000;Final energy process
+CSHNGA005;Final energy process
+CSHNGB005;Final energy process
+CSHNGC005;Final energy process
+CSHNHP000;Final energy process
+CSHNHP005;Final energy process
+FT_IISBFFUEL;Final energy process
+FT_IISBFFUELCCS;Final energy process
+FT_IISCKFUEL;Final energy process
+FT_IISDRIFUEL;Final energy process
+FT_IISEAFFUEL;Final energy process
+FT_IISFPRFUEL;Final energy process
+FT_IISPLTFUEL;Final energy process
+FT_IISPTDFUEL;Final energy process
+FT_IISSNRFUEL;Final energy process
+FT_INMFUEL;Final energy process
+FT_INMFUELCC;Final energy process
+FT_INMFUELPCC;Final energy process
+IECHELC_existing;Final energy process
+IECHELC_new;Final energy process
+IENFELC_existing;Final energy process
+IENFELC_new;Final energy process
+IFCHASP_existing;Final energy process
+IFCHBFG_existing;Final energy process
+IFCHCOG_existing;Final energy process
+IFCHCRD_existing;Final energy process
+IFCHDST_existing;Final energy process
+IFCHDST_new;Final energy process
+IFCHETH_existing;Final energy process
+IFCHETH_new;Final energy process
+IFCHGSL_existing;Final energy process
+IFCHHCO_existing;Final energy process
+IFCHHFO_existing;Final energy process
+IFCHHFO_new;Final energy process
+IFCHKER_existing;Final energy process
+IFCHLPG_existing;Final energy process
+IFCHLPG_new;Final energy process
+IFCHNAP_existing;Final energy process
+IFCHNAP_new;Final energy process
+IFCHNGA_existing;Final energy process
+IFCHNGA_new;Final energy process
+IFCHNGL_existing;Final energy process
+IFCHNGL_new;Final energy process
+IFCHNSP_existing;Final energy process
+IFCHOVC_existing;Final energy process
+IFCHPTC_existing;Final energy process
+IFCHRFG_existing;Final energy process
+IFCHTAR_existing;Final energy process
+IMCHELC_existing;Final energy process
+IMCHELC_new;Final energy process
+IMCHLPG_existing;Final energy process
+IMCHLPG_new;Final energy process
+IMLPELC_existing;Final energy process
+IMLPELC_new;Final energy process
+IMNFELC_existing;Final energy process
+IMNFELC_new;Final energy process
+IMOIELC_existing;Final energy process
+IMOIELC_new;Final energy process
+INMFINPRO00;Final energy process
+INMFINPRO01;Final energy process
+INMFINPRO02;Final energy process
+INMFINPRO03;Final energy process
+INMFINPRO04;Final energy process
+INMOXYGEN01;Final energy process
+IOCHBIO_existing;Final energy process
+IOCHBIO_new;Final energy process
+IOCHELC_existing;Final energy process
+IOCHELC_new;Final energy process
+IOCHPTC_existing;Final energy process
+IOLPBNG_existing;Final energy process
+IOLPBOI_existing;Final energy process
+IOLPELC_existing;Final energy process
+IOLPELC_new;Final energy process
+IOLPLPG_existing;Final energy process
+IOLPLPG_new;Final energy process
+IOLPNGA_existing;Final energy process
+IOLPNGA_new;Final energy process
+IOLPOIL_existing;Final energy process
+IOLPOIL_new;Final energy process
+IOLPPTC_existing;Final energy process
+IOLPREN_existing;Final energy process
+IOLPWST_existing;Final energy process
+IONFELC_existing;Final energy process
+IONFELC_new;Final energy process
+IONFNGA_existing;Final energy process
+IONFNGA_new;Final energy process
+IONFPTC_existing;Final energy process
+IOOIBNG_existing;Final energy process
+IOOIELC_existing;Final energy process
+IOOIELC_new;Final energy process
+IOOILPG_existing;Final energy process
+IOOINGA_existing;Final energy process
+IOOINGA_new;Final energy process
+IOOIOIL_existing;Final energy process
+IOOIOIL_new;Final energy process
+IOOIPTC_existing;Final energy process
+IOOIPTC_new;Final energy process
+IPCHBNG_existing;Final energy process
+IPCHBOI_existing;Final energy process
+IPCHCOK_existing;Final energy process
+IPCHHFO_existing;Final energy process
+IPCHHFO_new;Final energy process
+IPCHLPG_existing;Final energy process
+IPCHLPG_new;Final energy process
+IPCHNGA_existing;Final energy process
+IPCHNGA_new;Final energy process
+IPCHOIL_existing;Final energy process
+IPCHOIL_new;Final energy process
+IPCHOVC_existing;Final energy process
+IPCHOVC_new;Final energy process
+IPCHWST_existing;Final energy process
+IPLPBNG_existing;Final energy process
+IPLPBOI_existing;Final energy process
+IPLPELC_existing;Final energy process
+IPLPELC_new;Final energy process
+IPLPHFO_existing;Final energy process
+IPLPHFO_new;Final energy process
+IPLPLPG_existing;Final energy process
+IPLPLPG_new;Final energy process
+IPLPNGA_existing;Final energy process
+IPLPNGA_new;Final energy process
+IPLPOIL_existing;Final energy process
+IPLPOIL_new;Final energy process
+IPLPOVC_existing;Final energy process
+IPLPWST_existing;Final energy process
+IPNFBOI_existing;Final energy process
+IPNFCOA_existing;Final energy process
+IPNFCOA_new;Final energy process
+IPNFCOK_existing;Final energy process
+IPNFHFO_existing;Final energy process
+IPNFHFO_new;Final energy process
+IPNFLPG_existing;Final energy process
+IPNFLPG_new;Final energy process
+IPNFNGA_existing;Final energy process
+IPNFNGA_new;Final energy process
+IPNFOIL_existing;Final energy process
+IPNFOIL_new;Final energy process
+IPNFOVC_existing;Final energy process
+IPNFOVC_new;Final energy process
+IPOIBNG_existing;Final energy process
+IPOIBOI_existing;Final energy process
+IPOICOA_existing;Final energy process
+IPOICOA_new;Final energy process
+IPOICOG_existing;Final energy process
+IPOICOK_existing;Final energy process
+IPOIELC_existing;Final energy process
+IPOIELC_new;Final energy process
+IPOIHFO_existing;Final energy process
+IPOIHFO_new;Final energy process
+IPOILPG_existing;Final energy process
+IPOINGA_existing;Final energy process
+IPOINGA_new;Final energy process
+IPOIOIL_existing;Final energy process
+IPOIOIL_new;Final energy process
+IPOIOVC_existing;Final energy process
+IPOIOVC_new;Final energy process
+IPOIWST_existing;Final energy process
+ISCHBFG_existing;Final energy process
+ISCHBNG_existing;Final energy process
+ISCHBOI_existing;Final energy process
+ISCHCOA_existing;Final energy process
+ISCHCOA_new;Final energy process
+ISCHCOG_existing;Final energy process
+ISCHCOK_existing;Final energy process
+ISCHHET_existing;Final energy process
+ISCHHFO_existing;Final energy process
+ISCHHFO_new;Final energy process
+ISCHNGA_existing;Final energy process
+ISCHNGA_new;Final energy process
+ISCHOIL_existing;Final energy process
+ISCHOIL_new;Final energy process
+ISCHOVC_existing;Final energy process
+ISCHWST_existing;Final energy process
+ISLPBIO_existing;Final energy process
+ISLPBIO_new;Final energy process
+ISLPBNG_existing;Final energy process
+ISLPBOI_existing;Final energy process
+ISLPCOA_existing;Final energy process
+ISLPCOA_new;Final energy process
+ISLPHET_existing;Final energy process
+ISLPHFO_existing;Final energy process
+ISLPHFO_new;Final energy process
+ISLPLPG_existing;Final energy process
+ISLPNGA_existing;Final energy process
+ISLPNGA_new;Final energy process
+ISLPOIL_existing;Final energy process
+ISLPOIL_new;Final energy process
+ISLPOVC_existing;Final energy process
+ISLPWST_existing;Final energy process
+ISNFBFG_existing;Final energy process
+ISNFBIO_existing;Final energy process
+ISNFBOI_existing;Final energy process
+ISNFCOA_existing;Final energy process
+ISNFCOA_new;Final energy process
+ISNFCOG_existing;Final energy process
+ISNFCOK_existing;Final energy process
+ISNFHET_existing;Final energy process
+ISNFHFO_existing;Final energy process
+ISNFHFO_new;Final energy process
+ISNFNGA_existing;Final energy process
+ISNFNGA_new;Final energy process
+ISNFOIL_existing;Final energy process
+ISNFOIL_new;Final energy process
+ISNFOVC_existing;Final energy process
+ISOIBIO_existing;Final energy process
+ISOIBIO_new;Final energy process
+ISOIBNG_existing;Final energy process
+ISOIBOI_existing;Final energy process
+ISOICOA_existing;Final energy process
+ISOICOA_new;Final energy process
+ISOICOK_existing;Final energy process
+ISOIHET_existing;Final energy process
+ISOIHFO_existing;Final energy process
+ISOIHFO_new;Final energy process
+ISOILPG_existing;Final energy process
+ISOINGA_existing;Final energy process
+ISOINGA_new;Final energy process
+ISOIOIL_existing;Final energy process
+ISOIOIL_new;Final energy process
+ISOIOVC_existing;Final energy process
+ISOIWST_existing;Final energy process
+NEU_Generic;Final energy process
+ONO_generic;Final energy process
+RCDELC000;Final energy process
+RCDELC005;Final energy process
+RCDELC105;Final energy process
+RCDNGA000;Final energy process
+RCDNGA005;Final energy process
+RCKBIO000;Final energy process
+RCKBIO005;Final energy process
+RCKCOA000;Final energy process
+RCKCOA005;Final energy process
+RCKDST000;Final energy process
+RCKDST005;Final energy process
+RCKELC000;Final energy process
+RCKELC005;Final energy process
+RCKKER000;Final energy process
+RCKKER005;Final energy process
+RCKLPG000;Final energy process
+RCKLPG005;Final energy process
+RCKNGA000;Final energy process
+RCKNGA005;Final energy process
+RCKSOL000;Final energy process
+RCKSOL005;Final energy process
+RCWELC000;Final energy process
+RCWELC305;Final energy process
+RCWELC405;Final energy process
+RDWELC000;Final energy process
+RDWELC005;Final energy process
+RDWELC105;Final energy process
+RDWELC210;Final energy process
+RLICFL000;Final energy process
+RLICFL005;Final energy process
+RLIFLA005;Final energy process
+RLIFLE000;Final energy process
+RLIFLE005;Final energy process
+RLIHAE000;Final energy process
+RLIHAE005;Final energy process
+RLIICA010;Final energy process
+RLIICE000;Final energy process
+RLIICE005;Final energy process
+RLIKER000;Final energy process
+RLIKER005;Final energy process
+ROTBIO000;Final energy process
+ROTBIO005;Final energy process
+ROTCOA000;Final energy process
+ROTCOA005;Final energy process
+ROTDST000;Final energy process
+ROTDST005;Final energy process
+ROTGEO000;Final energy process
+ROTHET000;Final energy process
+ROTHET005;Final energy process
+ROTHFO000;Final energy process
+ROTKER000;Final energy process
+ROTKER005;Final energy process
+ROTLPG000;Final energy process
+ROTLPG005;Final energy process
+ROTNGA000;Final energy process
+ROTNGA005;Final energy process
+ROTSOL000;Final energy process
+ROTSOL005;Final energy process
+RRFEXS005;Final energy process
+RRFFRE000;Final energy process
+RRFGLD005;Final energy process
+RRFIMP005;Final energy process
+RRFRFE000;Final energy process
+RSCCAE000;Final energy process
+RSCEHP000;Final energy process
+RSCELA005;Final energy process
+RSCELB005;Final energy process
+RSCELC005;Final energy process
+RSCELD005;Final energy process
+RSCELE005;Final energy process
+RSCELF005;Final energy process
+RSCELG005;Final energy process
+RSCGEO000;Final energy process
+RSCNGA005;Final energy process
+RSCNGB005;Final energy process
+RSCNGC015;Final energy process
+RSCNHP000;Final energy process
+RSCRAE000;Final energy process
+RSHBIO000;Final energy process
+RSHBIO005;Final energy process
+RSHCOA000;Final energy process
+RSHCOA005;Final energy process
+RSHDSA005;Final energy process
+RSHDSB005;Final energy process
+RSHDSO005;Final energy process
+RSHDST000;Final energy process
+RSHDST005;Final energy process
+RSHEHP000;Final energy process
+RSHEHP005;Final energy process
+RSHELB005;Final energy process
+RSHELD005;Final energy process
+RSHELF005;Final energy process
+RSHELS005;Final energy process
+RSHERS000;Final energy process
+RSHERS005;Final energy process
+RSHGEO000;Final energy process
+RSHHET000;Final energy process
+RSHHET005;Final energy process
+RSHHFO000;Final energy process
+RSHKER000;Final energy process
+RSHKER005;Final energy process
+RSHLPG000;Final energy process
+RSHLPG005;Final energy process
+RSHNGA000;Final energy process
+RSHNGA005;Final energy process
+RSHNGC005;Final energy process
+RSHNGD005;Final energy process
+RSHNGE005;Final energy process
+RSHNGS005;Final energy process
+RSHNHP000;Final energy process
+RSHNHP005;Final energy process
+RSHSOL000;Final energy process
+TAD_Generic;Final energy process
+TAI_Generic;Final energy process
+TRBBDS_Existing;Final energy process
+TRBBGS_Existing;Final energy process
+TRBDST_Existing;Final energy process
+TRBDST_new;Final energy process
+TRBELC_Existing;Final energy process
+TRBELC_new;Final energy process
+TRBETH_new;Final energy process
+TRBFUE_new;Final energy process
+TRBGAS_new;Final energy process
+TRBGSL_Existing;Final energy process
+TRBHYB_new;Final energy process
+TRBHYDFC30;Final energy process
+TRBLPG_Existing;Final energy process
+TRBLPG_new;Final energy process
+TRBMET_new;Final energy process
+TRBNGA_Existing;Final energy process
+TRBNGA_new;Final energy process
+TRCBDS_Existing;Final energy process
+TRCBGS_Existing;Final energy process
+TRCDSA_new;Final energy process
+TRCDSB_new;Final energy process
+TRCDST_Existing;Final energy process
+TRCDST_new;Final energy process
+TRCELC_new;Final energy process
+TRCETA_new;Final energy process
+TRCETB_new;Final energy process
+TRCETH_new;Final energy process
+TRCGAS_new;Final energy process
+TRCGSL_Existing;Final energy process
+TRCLPG_Existing;Final energy process
+TRCLPG_new;Final energy process
+TRCNGA_Existing;Final energy process
+TRCNGA_new;Final energy process
+TREDST_Existing;Final energy process
+TREDST_new;Final energy process
+TREGSL_Existing;Final energy process
+TREGSL_new;Final energy process
+TRHBDS_Existing;Final energy process
+TRHBGS_Existing;Final energy process
+TRHDSA_new;Final energy process
+TRHDSB_new;Final energy process
+TRHDST_Existing;Final energy process
+TRHDST_new;Final energy process
+TRHETH_new;Final energy process
+TRHGAS_new;Final energy process
+TRHGSL_Existing;Final energy process
+TRHHYDFC30;Final energy process
+TRHLPG_Existing;Final energy process
+TRHLPG_new;Final energy process
+TRHMET_new;Final energy process
+TRHNGA_Existing;Final energy process
+TRHNGA_new;Final energy process
+TRLBDS_Existing;Final energy process
+TRLBGS_Existing;Final energy process
+TRLDCA_new;Final energy process
+TRLDCB_new;Final energy process
+TRLDCC_new;Final energy process
+TRLDEG_new;Final energy process
+TRLDMG_new;Final energy process
+TRLDST_Existing;Final energy process
+TRLELC_Existing;Final energy process
+TRLELC_new;Final energy process
+TRLETH_new;Final energy process
+TRLFUC_new;Final energy process
+TRLGCA_new;Final energy process
+TRLGCB_new;Final energy process
+TRLGCC_new;Final energy process
+TRLGSL_Existing;Final energy process
+TRLHHA005;Final energy process
+TRLHHB020;Final energy process
+TRLHHC005;Final energy process
+TRLHHD020;Final energy process
+TRLHHE005;Final energy process
+TRLHHF020;Final energy process
+TRLHHG005;Final energy process
+TRLHYB_new;Final energy process
+TRLLPG_Existing;Final energy process
+TRLLPG_new;Final energy process
+TRLMET_new;Final energy process
+TRLNGA_Existing;Final energy process
+TRLNGA_new;Final energy process
+TRMBDS_Existing;Final energy process
+TRMBGS_Existing;Final energy process
+TRMDSA_new;Final energy process
+TRMDSB_new;Final energy process
+TRMDST_Existing;Final energy process
+TRMDST_new;Final energy process
+TRMELC_new;Final energy process
+TRMETA_new;Final energy process
+TRMETB_new;Final energy process
+TRMETH_new;Final energy process
+TRMGAS_new;Final energy process
+TRMGSL_Existing;Final energy process
+TRMLPG_Existing;Final energy process
+TRMLPG_new;Final energy process
+TRMNGA_Existing;Final energy process
+TRMNGA_new;Final energy process
+TRTBDS_Existing;Final energy process
+TRTBGS_Existing;Final energy process
+TRTDCA_new;Final energy process
+TRTDCB_new;Final energy process
+TRTDCC_new;Final energy process
+TRTDEG_new;Final energy process
+TRTDMG_new;Final energy process
+TRTDST_Existing;Final energy process
+TRTELC_Existing;Final energy process
+TRTELC_new;Final energy process
+TRTETA_new;Final energy process
+TRTETB_new;Final energy process
+TRTETH_new;Final energy process
+TRTGCA_new;Final energy process
+TRTGCB_new;Final energy process
+TRTGCC_new;Final energy process
+TRTGSL_Existing;Final energy process
+TRTHHA005;Final energy process
+TRTHHB020;Final energy process
+TRTHHC005;Final energy process
+TRTHHD020;Final energy process
+TRTHHE005;Final energy process
+TRTHHF020;Final energy process
+TRTHHG005;Final energy process
+TRTHYB_new;Final energy process
+TRTLPG_Existing;Final energy process
+TRTLPG_new;Final energy process
+TRTMET_new;Final energy process
+TRTNGA_Existing;Final energy process
+TRTNGA_new;Final energy process
+TRWGSL_Existing;Final energy process
+TRWMCG_new;Final energy process
+TRWMPG_new;Final energy process
+TTF_Generic;Final energy process
+TTF005_new;Final energy process
+TTP_Generic;Final energy process
+TTP005_new;Final energy process
+TWD_Generic;Final energy process
+TWD005_new;Final energy process
+TWI_Generic;Final energy process
+TWI005_new;Final energy process
