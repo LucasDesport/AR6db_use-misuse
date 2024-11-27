@@ -8,10 +8,9 @@ import pathlib
 import sqlite3
 
 DATADIR = pathlib.Path('data')
-DATADIROUT = pathlib.Path('outputs')
 
 # Imports the database where TIAM-FR outputs are collected
-conn = sqlite3.connect(DATADIR / 'c1.db') # to be uploaded from Zenodo
+conn = sqlite3.connect(DATADIR / 'c1.db')  # to be uploaded from Zenodo
 
 # %% [markdown]
 # ## Greenhouse gases (GHG)
@@ -33,7 +32,7 @@ FROM
 GROUP BY
    Scenario, Period;"""
 
-df_ghg = pd.read_sql_query(qs, conn)
+ghg = pd.read_sql_query(qs, conn)
 
 # %% [markdown]
 # ## Fossil CO<sub>2</sub> captured and stored (CCSFOS)
@@ -65,7 +64,7 @@ GROUP BY
 ORDER BY
    Scenario, Year;"""
 
-df_ccsfos = pd.read_sql_query(qs, conn)
+ccsfos = pd.read_sql_query(qs, conn)
 
 # %% [markdown]
 # ## Low-carbon share of primary energy (LCSPE)
@@ -146,12 +145,12 @@ WHERE
 GROUP BY
    Scenario,Label,Year;"""
 
-df_lcspe = pd.read_sql_query(qs, conn)
+lcspe = pd.read_sql_query(qs, conn)
 
 # %%
-df_lcspe = (df_lcspe.pivot_table(index=['Scenario', 'Year'], columns='Label', values='Value', aggfunc='sum')
-                    .assign(Value=lambda x: x['Low-carbon'] / (x.pop('Low-carbon') + x.pop('Fossil'))) # divides the sum of global low-carbon primary energy by the total primary energy
-                    .reset_index().rename_axis(columns=None))
+lcspe = (lcspe.pivot_table(index=['Scenario', 'Year'], columns='Label', values='Value', aggfunc='sum')
+              .assign(Value=lambda x: x['Low-carbon'] / (x.pop('Low-carbon') + x.pop('Fossil'))) # divides the sum of global low-carbon primary energy by the total primary energy
+              .reset_index().rename_axis(columns=None))
 
 # %% [markdown]
 # ## Final energy demand (FED)
@@ -169,13 +168,13 @@ GROUP BY
    Process,
    Period;"""
 
-df_fed = pd.read_sql_query(qs, conn)
+fed = pd.read_sql_query(qs, conn)
 
 # %%
 dmap = pd.read_csv(DATADIR / 'mapping.csv', sep=';').set_index('Commodity')['Label']
-label = df_fed.pop('Process').map(dmap)
-df_fed = df_fed.loc[label == 'Final energy process']
-df_fed = df_fed.groupby(['Scenario', 'Year'], as_index=False).sum()
+label = fed.pop('Process').map(dmap)
+fed = fed.loc[label == 'Final energy process']
+fed = fed.groupby(['Scenario', 'Year'], as_index=False).sum()
 
 # %% [markdown]
 # ## CO<sub>2</sub> intensity of electricity (CO2ELC)
@@ -208,12 +207,12 @@ WHERE
 GROUP BY
    Scenario, Period, Commodity;"""
 
-df_co2elc = pd.read_sql_query(qs, conn)
+co2elc = pd.read_sql_query(qs, conn)
 
 # %%
-df_co2elc = (df_co2elc.pivot_table(index=['Scenario', 'Year'], columns='Commodity', values='Value')
-                      .assign(Value=lambda x: x.pop('ELCCO2N') / x.pop('ELC') * 3.6)  # x3.6 to transform MWh to PJ
-                      .reset_index().rename_axis(columns=None))
+co2elc = (co2elc.pivot_table(index=['Scenario', 'Year'], columns='Commodity', values='Value')
+                .assign(Value=lambda x: x.pop('ELCCO2N') / x.pop('ELC') * 3.6)  # x3.6 to transform MWh to PJ
+                .reset_index().rename_axis(columns=None))
 
 # %% [markdown]
 # ## Electricity share of final energy (ESFE)
@@ -228,11 +227,11 @@ FROM VAR_FIn
 WHERE Process IN ('FT_INDELC', 'FT_AGRELC', 'FT_COMELC', 'FT_RESELC', 'FT_TRAELC')
 GROUP BY Scenario, Period;"""
 
-df_esfe = pd.read_sql_query(qs, conn)
+esfe = pd.read_sql_query(qs, conn)
 
 # %%
-df_esfe = (df_esfe.merge(df_fed, on=['Scenario', 'Year'])
-                  .assign(Value=lambda x: x.pop('ELCFIN') / x['Value']))
+esfe = (esfe.merge(fed, on=['Scenario', 'Year'])
+            .assign(Value=lambda x: x.pop('ELCFIN') / x['Value']))
 
 # %% [markdown]
 # ## Non-energy GHG emissions (NONNRG)
@@ -254,17 +253,17 @@ FROM
 GROUP BY
    Scenario, Period;"""
 
-df_nonnrg = pd.read_sql_query(qs, conn)
+nonnrg = pd.read_sql_query(qs, conn)
 
 # %% [markdown]
 # ## Exportation
 
 # %%
-constraints = pd.read_csv(DATADIROUT / 'constraints.csv', index_col=['Scenario', 'Year'])
+constraints = pd.read_csv(DATADIR / 'constraints.csv', index_col=['Scenario', 'Year'])
 
-dfs = {'ghg': df_ghg, 'lcspe': df_lcspe, 'fed': df_fed, 'esfe': df_esfe,
-       'co2elc': df_co2elc, 'ccsfos': df_ccsfos, 'nonnrg': df_nonnrg}
+dfs = {'ghg': ghg, 'lcspe': lcspe, 'fed': fed, 'esfe': esfe,
+       'co2elc': co2elc, 'ccsfos': ccsfos, 'nonnrg': nonnrg}
 
 df = pd.concat({var: df.loc[df['Year'] != '2018'].set_index(['Scenario', 'Year'])['Value'] for var, df in dfs.items()}, axis=1)
 df = pd.concat([constraints, df], axis=0, sort=False)[dfs.keys()]
-df.to_csv(DATADIROUT / 'tiam-fr_vs_constraints.csv')
+df.to_csv(DATADIR / 'tiam-fr_vs_constraints.csv')

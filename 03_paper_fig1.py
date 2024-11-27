@@ -28,7 +28,6 @@ import pathlib
 
 mpl.style.use(["science", "nature"])
 DATADIR = pathlib.Path('data')
-MODELDIR = pathlib.Path('models/MAGICC_Inputs')
 FIGOUT = pathlib.Path('figures')
 
 from matplotlib.ticker import MultipleLocator
@@ -36,104 +35,82 @@ from matplotlib.ticker import AutoMinorLocator, NullLocator
 
 
 # %%
-def load_ar6(category):
-    """Imports the database of scenarios according to the category specified by the user..
+def load_ar6_climate(cat):
+    """Imports the database of scenarios according to the category specified by the user.
     """
-    df = pd.read_parquet(DATADIR / 'AR6_Scenarios_Database_World_ALL_CLIMATE_v1.1_with_category.parquet') 
-
-    # Define the columns of the dataframe
-    cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit'] + [str(i) for i in range(1995, 2101, 1)]
+    var = 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile'
     
-    # Select pairs of models and scenarios belonging to the user-defined category
-    cdict = pd.read_excel(DATADIR / 'AR6_Scenarios_Database_metadata_indicators_v1.1.xlsx', sheet_name='meta_Ch3vetted_withclimate')
-    df = df.merge(cdict, on=['Model', 'Scenario'], how='left')
-    df = df[df['Category'] == category]
-    df = df.drop(columns=['Category'])
+    df = (pd.read_csv(DATADIR / "AR6_Scenarios_Database_World_ALL_CLIMATE_subset_and_metadata_v1.1.csv")
+             .loc[lambda x: x['Variable'].eq(var) & x['Category'].eq(cat) & x['Year'].ge(2000),
+                  ['Model', 'Scenario', 'Year', 'Value']])
 
-    df = df.loc[df['Variable'].isin(['AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile']), cols]
-    df = pd.melt(df, id_vars=cols[:5], var_name='Year', value_name='Value').sort_values(by=['Model','Scenario', 'Year'])
-    df = df.drop(columns=['Variable','Region','Unit'])
-    df = df.astype({'Year': "int", 'Value': "float"})
-
-    return df.query('Year >= 2000')
-
-
-# %%
-def load_magicc(category):
-    """Imports the precompiled 5th, 50th and 95th percentiles emissions pathways according to the category specified by the user.
-    """
-    cols =  ['climate_model', 'data_id', 'model', 'quantile', 'reference_period_end_year', 'reference_period_start_year', 'region', 'scenario', 'stage', 'todo', 'unit', 'variable']
-    
-    df5 = pd.read_csv(DATADIR / f'{category}_5th_magicc.csv')
-    df5 = df5[df5['variable'] == 'Surface Temperature']
-    df5 = pd.melt(df5, id_vars=cols, var_name='Year', value_name='Value')
-    df5 = df5[['scenario','Year','Value']]
-    df5 = df5.rename(columns={'scenario': 'Scenario'})
-
-    df50 = pd.read_csv(DATADIR / f'{category}_med_magicc.csv')
-    df50 = df50[df50['variable'] == 'Surface Temperature']
-    df50 = pd.melt(df50, id_vars=cols, var_name='Year', value_name='Value')
-    df50 = df50[['scenario','Year','Value']]
-    df50 = df50.rename(columns={'scenario': 'Scenario'})
-
-    df95 = pd.read_csv(DATADIR / f'{category}_95th_magicc.csv')
-    df95 = df95[df95['variable'] == 'Surface Temperature']
-    df95 = pd.melt(df95, id_vars=cols, var_name='Year', value_name='Value')
-    df95 = df95[['scenario','Year','Value']]
-    df95 = df95.rename(columns={'scenario': 'Scenario'})
-
-    df = pd.concat([df5, df50, df95], ignore_index=True).astype({'Year': "int", 'Value': "float"})
-    
     return df
 
 
 # %%
-# Load the AR6 Scenarios Database for a given category and set of variables
-category = 'C1'
-ar6 = load_ar6(category)
-magicc = load_magicc(category)
+def load_magicc(cat):
+    """Imports the precompiled 5th, 50th and 95th percentiles emissions pathways according to the category specified by the user.
+    """
+    var = 'Surface Temperature'
+    cols = ['scenario', 'variable'] + [str(i) for i in range(2000, 2101)]
+    scenarios = ['5th', '95th', 'med']
+
+    dfs = []
+    for scen in scenarios:
+        df = (pd.read_csv(DATADIR / f"{cat}_{scen}_magicc.csv", usecols=cols)
+                .loc[lambda x: x.pop('variable').eq(var)]
+                .rename(columns={'scenario': 'Scenario'}))
+
+        df = (pd.melt(df, id_vars='Scenario', var_name='Year', value_name='Value')
+                .astype({'Year': int, 'Value': float}))
+
+        dfs.append(df)
+
+    return pd.concat(dfs, ignore_index=True)
+
 
 # %%
-DATADIROUT.mkdir(exist_ok=True)
+# Load the AR6 Scenarios Database for a given category and set of variables
+cat = 'C1'
+ar6 = load_ar6_climate(cat)
+magicc = load_magicc(cat)
 
-fig, ax = plt.subplots(figsize=(5, 3), dpi=300)
-plt.xlim(2000, 2100)
-plt.ylim(0, 2)
-ax.set_xticks(range(2000, 2101, 10))
-ax.xaxis.set_minor_locator(plt.NullLocator()) 
-ax.yaxis.set_major_locator(MultipleLocator(0.25))
-ax.yaxis.set_minor_locator(MultipleLocator(0.05))
+# %%
+FIGOUT.mkdir(exist_ok=True)
 
-ax.legend()
-ax.set_xlabel('Year', fontsize=10)
-ax.set_ylabel('Temperature [K]', fontsize=10)
+width, height = mpl.rcParams["figure.figsize"]
+fig, ax = plt.subplots(figsize=(width, height), dpi=300, constrained_layout=True)
 
 pw_colors = {
-    str(category)+' 5$^{th}$ pathway': 'blue',
-    str(category)+' 95$^{th}$ pathway': 'red',
-    str(category)+' median pathway': 'green'
+    f'{cat} 5$^{{th}}$ pathway': 'blue',
+    f'{cat} 95$^{{th}}$ pathway': 'red',
+    f'{cat} median pathway': 'green'
 }
 
-magicc['Scenario'] = magicc['Scenario'].replace(str(category)+'_5th', str(category)+' 5$^{th}$ pathway')
-magicc['Scenario'] = magicc['Scenario'].replace(str(category)+'_95th', str(category)+' 95$^{th}$ pathway')
-magicc['Scenario'] = magicc['Scenario'].replace(str(category)+'_med', str(category)+' median pathway')
+magicc['Scenario'] = magicc['Scenario'].replace({
+    f'{cat}_5th': f'{cat} 5$^{{th}}$ pathway',
+    f'{cat}_95th': f'{cat} 95$^{{th}}$ pathway',
+    f'{cat}_med': f'{cat} median pathway'})
 
-for scenario in magicc['Scenario'].unique():
-    subset = magicc[magicc['Scenario'] == scenario]
-    color = pw_colors.get(scenario)
+for scen, subset in magicc.groupby('Scenario', sort=False):
+    color = pw_colors.get(scen)
     ax.plot(subset['Year'], subset['Value'], label=scenario, zorder=1, color=color)
 
 # Assign a unique label to the category-specified scenarios
 for i, (*_, subset) in enumerate(ar6.groupby(['Model', 'Scenario'])):
-    label = str(category)+' scenarios' if i == 0 else '_nolegend_'
-    ax.plot(subset['Year'], subset['Value'], color='gray', alpha=0.5, label=label, zorder=0)
+    label = f'{cat} scenarios' if i == 0 else '_nolegend_'
+    ax.plot(subset['Year'], subset['Value'], color='lightgray', alpha=0.5, lw=0.3, label=label, zorder=0)
 
-ax.legend(loc='lower left', fontsize=8)
-
-plt.tight_layout()
-plt.show()
+ax.legend(loc='lower left')
+ax.set_xlabel('Year')
+ax.set_ylabel('Temperature [K]')
+ax.tick_params(axis='x', labelrotation=45)
+ax.tick_params(axis='x', which='minor', bottom=False, top=False)
+ax.set_xlim(2000, 2100)
+ax.set_ylim(0, 2)
+ax.set_xticks(range(2000, 2101, 10))
+ax.axhline(1.5, color='gray', ls='dashed', lw=0.5)
 
 fig.savefig(FIGOUT / "Figure1.png", bbox_inches='tight')
+plt.show()
 
-
-# %%

@@ -21,7 +21,7 @@
 #     name: python
 #     nbconvert_exporter: python
 #     pygments_lexer: ipython3
-#     version: 3.11.7
+#     version: 3.10.13
 # ---
 
 # %% [markdown]
@@ -37,7 +37,7 @@ import scienceplots
 import pathlib
 
 DATADIR = pathlib.Path('outputs')
-OUTPUT = pathlib.Path('figures')
+FIGOUT = pathlib.Path('figures')
 
 mpl.style.use(["science", "nature"])
 
@@ -151,13 +151,13 @@ def make_plot(var, df, fig_id):
 
 
 # %% editable=true slideshow={"slide_type": ""}
-OUTPUT.mkdir(exist_ok=True)
+FIGOUT.mkdir(exist_ok=True)
 
 for var in chart_elements:
     subdf = df[['Scenario', 'Year', 'Group', var]].copy()
 
     fig, ax = make_plot(var, subdf, chart_elements[var].get('fig_id'))
-    fig.savefig(OUTPUT / f"{var}.png", bbox_inches='tight')
+    fig.savefig(FIGOUT / f"{var}.png", bbox_inches='tight')
     plt.show()
 
 # %% [markdown]
@@ -188,6 +188,6 @@ legend = {
 ax_legend.legend(handles=legend.values(), labels=legend.keys(), loc='center', ncol=3)
 ax_legend.axis('off')
 plt.subplots_adjust(top=1e-6, bottom=0)
-fig_legend.savefig(OUTPUT / "legend.png", bbox_inches='tight')
+fig_legend.savefig(FIGOUT / "legend.png", bbox_inches='tight')
 
 plt.show()

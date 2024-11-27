@@ -25,55 +25,69 @@ import pathlib
 DATADIR = pathlib.Path('data')
 DATADIR.mkdir(exist_ok=True)
 
+
 # %%
-# AR6 variables to be processed
-archive = DATADIR / "1668008030411-AR6_Scenarios_Database_World_ALL_CLIMATE_v1.1.csv.zip"
-variables = ['AR6 climate diagnostics|Infilled|Emissions|Kyoto Gases (AR6-GWP100)',
-             'Final Energy',
-             'Final Energy|Electricity',
-             'Carbon Sequestration|CCS|Fossil',
-             'Emissions|CO2|Energy|Supply|Electricity',
-             'Secondary Energy|Electricity',
-             'Primary Energy',
-             'Primary Energy|Fossil|w/ CCS',
-             'Primary Energy|Nuclear',
-             'Primary Energy|Renewables (incl. Biomass)',
-             'Emissions|CO2',
-             'Emissions|CO2|Energy',
-             'Emissions|CO2|AFOLU',
-             'Emissions|CO2|Waste',
-             'Emissions|CO2|Industrial Processes',
-             'Emissions|CO2|Other',
-             'Emissions|CH4',
-             'Emissions|CH4|Energy',
-             'Emissions|CH4|AFOLU',
-             'Emissions|CH4|Waste',
-             'Emissions|CH4|Industrial Processes',
-             'Emissions|CH4|Other',
-             'Emissions|N2O',
-             'Emissions|N2O|Energy',
-             'Emissions|N2O|AFOLU',
-             'Emissions|N2O|Industrial Processes',
-             'Emissions|N2O|Waste',
-             'Emissions|N2O|Other',
-             'Emissions|F-Gases']
+def load_ar6():
+    # AR6 variables to be processed
+    archive = DATADIR / "1668008030411-AR6_Scenarios_Database_World_ALL_CLIMATE_v1.1.csv.zip"
+    cache = DATADIR / "AR6_Scenarios_Database_World_ALL_CLIMATE_subset_and_metadata_v1.1.csv"
 
-# Import the database and metadata of scenarios and a subset of variables
-with ZipFile(archive) as zipfile:
-    # Process database
-    cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit'] + [str(i) for i in range(2020, 2101, 10)]
-    data = pd.read_csv(zipfile.open('AR6_Scenarios_Database_World_ALL_CLIMATE_v1.1.csv'), usecols=cols)
-    data = data[data['Variable'].isin(variables)]
+    # Use cache if possible
+    if cache.exists():
+        return pd.read_csv(cache)
 
-    # Process metadata
-    cols = ['Model', 'Scenario', 'Category', 'IMP_marker']
-    meta = pd.read_excel(zipfile.open('AR6_Scenarios_Database_metadata_indicators_v1.1.xlsx'), sheet_name='meta_Ch3vetted_withclimate', usecols=cols)
+    variables = ['AR6 climate diagnostics|Infilled|Emissions|Kyoto Gases (AR6-GWP100)',
+                 'AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile',
+                 'Final Energy',
+                 'Final Energy|Electricity',
+                 'Carbon Sequestration|CCS|Fossil',
+                 'Emissions|CO2|Energy|Supply|Electricity',
+                 'Secondary Energy|Electricity',
+                 'Primary Energy',
+                 'Primary Energy|Fossil|w/ CCS',
+                 'Primary Energy|Nuclear',
+                 'Primary Energy|Renewables (incl. Biomass)',
+                 'Emissions|CO2',
+                 'Emissions|CO2|Energy',
+                 'Emissions|CO2|AFOLU',
+                 'Emissions|CO2|Waste',
+                 'Emissions|CO2|Industrial Processes',
+                 'Emissions|CO2|Other',
+                 'Emissions|CH4',
+                 'Emissions|CH4|Energy',
+                 'Emissions|CH4|AFOLU',
+                 'Emissions|CH4|Waste',
+                 'Emissions|CH4|Industrial Processes',
+                 'Emissions|CH4|Other',
+                 'Emissions|N2O',
+                 'Emissions|N2O|Energy',
+                 'Emissions|N2O|AFOLU',
+                 'Emissions|N2O|Industrial Processes',
+                 'Emissions|N2O|Waste',
+                 'Emissions|N2O|Other',
+                 'Emissions|F-Gases']
 
-# Combine dataframes
-cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit', 'Year', 'Value', 'Category', 'IMP_marker']
-df = meta.merge(data, on=['Model', 'Scenario'], how='right')
-df = pd.melt(df, id_vars=df.columns[:7], var_name='Year', value_name='Value')
-df.to_csv(DATADIR / 'AR6_Scenarios_Database_World_ALL_CLIMATE_subset_and_metadata_v1.1.csv', index=False)
+    # Import the database and metadata of scenarios and a subset of variables
+    with ZipFile(archive) as zipfile:
+        # Process database
+        cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit'] + [str(i) for i in range(2020, 2101, 10)]
+        data = pd.read_csv(zipfile.open('AR6_Scenarios_Database_World_ALL_CLIMATE_v1.1.csv'), usecols=cols)
+        data = data[data['Variable'].isin(variables)]
+
+        # Process metadata
+        cols = ['Model', 'Scenario', 'Category', 'IMP_marker']
+        meta = pd.read_excel(zipfile.open('AR6_Scenarios_Database_metadata_indicators_v1.1.xlsx'), sheet_name='meta_Ch3vetted_withclimate', usecols=cols)
+
+    # Combine dataframes
+    cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit', 'Year', 'Value', 'Category', 'IMP_marker']
+    df = meta.merge(data, on=['Model', 'Scenario'], how='right')
+    df = pd.melt(df, id_vars=df.columns[:7], var_name='Year', value_name='Value')
+    df.to_csv(cache, index=False)
+    return df
+
+
+# %%
+df = load_ar6()
 
 # %% [markdown]
 # The following variables are either those given in Tables 3.2 and 3.4 of IPCC AR6 WGIII Chapter 3 (([Riahi et al., 2023](https://www.cambridge.org/core/books/climate-change-2022-mitigation-of-climate-change/mitigation-pathways-compatible-with-longterm-goals/7C750344E39ECA3BD5CB14156FCEEFE9)) or are furtherly computed to retrieve these variables.
