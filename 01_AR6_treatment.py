@@ -172,7 +172,7 @@ ccsfos = dfc.loc[dfc['Variable'].isin(var)]
 ccsfos = (ccsfos.drop(columns=['Category', 'Region', 'Unit', 'Variable'])
                 .sort_values(['Scenario', 'Year']))
 
-ccsfos = process_scenarios(ccsfos).assign(Value=lambda x: x['Value'].round(0))
+ccsfos = process_scenarios(ccsfos).assign(Value=lambda x: x['Value'].round(0).div(1000))  # to obtain values in Gt
 
 # %% [markdown]
 # ## CO<sub>2</sub> intensity of electricity (CO2ELC)
