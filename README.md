@@ -4,8 +4,10 @@ The code extracts the [AR6 Scenarios Database hosted by IIASA](https://data.ece.
 
 ## Requirements
 
-The code reads in the IPCC AR6 Scenarios Database, using both data and metadata. parquet ? Additionally, the code imports the outputs of TIAM-FR from a database to be released on Zenodo but available on request for now.
-For the calculations, the code requires standard python packages like pandas, numpy and matplotlib.
+Two database are required to process the code.
+The code reads in the IPCC AR6 Scenarios Database, using both data and metadata of all climate variables which refers to the *AR6_Scenarios_Database_World_ALL_CLIMATE_v1.1.csv* hosted on [IIASA website](https://data.ece.iiasa.ac.at/ar6/#/downloads). The zipped file should be uploaded on the ```data``` folder.
+Additionally, the code imports the outputs of TIAM-FR from a database (.db) to be released on Zenodo but available on request for now.
+For the calculations, the code requires standard python packages like pandas, openpyxl, matplotlib and pillow.
 
 ## Usage and structure
 
