@@ -94,7 +94,7 @@ magicc['Scenario'] = magicc['Scenario'].replace({
 
 for scen, subset in magicc.groupby('Scenario', sort=False):
     color = pw_colors.get(scen)
-    ax.plot(subset['Year'], subset['Value'], label=scenario, zorder=1, color=color)
+    ax.plot(subset['Year'], subset['Value'], label=scen, zorder=1, color=color)
 
 # Assign a unique label to the category-specified scenarios
 for i, (*_, subset) in enumerate(ar6.groupby(['Model', 'Scenario'])):

@@ -36,7 +36,7 @@ import matplotlib.patheffects as mpe
 import scienceplots
 import pathlib
 
-DATADIR = pathlib.Path('outputs')
+DATADIR = pathlib.Path('data')
 FIGOUT = pathlib.Path('figures')
 
 mpl.style.use(["science", "nature"])
