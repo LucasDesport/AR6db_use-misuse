@@ -151,13 +151,13 @@ def make_plot(var, df, fig_id):
 
 
 # %% editable=true slideshow={"slide_type": ""}
-FIGOUT.mkdir(exist_ok=True)
+(FIGOUT / "paper").mkdir(parents=True, exist_ok=True)
 
 for var in chart_elements:
     subdf = df[['Scenario', 'Year', 'Group', var]].copy()
 
     fig, ax = make_plot(var, subdf, chart_elements[var].get('fig_id'))
-    fig.savefig(FIGOUT / f"{var}.png", bbox_inches='tight')
+    fig.savefig(FIGOUT / "paper" / f"{var}.png", bbox_inches='tight')
     plt.show()
 
 # %% [markdown]
@@ -167,9 +167,8 @@ for var in chart_elements:
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 
-scale = 1
 width, height = mpl.rcParams["figure.figsize"]
-fig_legend, ax_legend = plt.subplots(figsize=(width*scale, height*scale), dpi=300)
+fig_legend, ax_legend = plt.subplots(figsize=(width, height), dpi=300)
 
 legend = {
     'Median pathway': Line2D([0], [0], **(kwds['stat'] | kwds['Median'])),
@@ -188,6 +187,23 @@ legend = {
 ax_legend.legend(handles=legend.values(), labels=legend.keys(), loc='center', ncol=3)
 ax_legend.axis('off')
 plt.subplots_adjust(top=1e-6, bottom=0)
-fig_legend.savefig(FIGOUT / "legend.png", bbox_inches='tight')
+fig_legend.savefig(FIGOUT / "paper" / "legend.png", bbox_inches='tight')
 
 plt.show()
+
+# %%
+from PIL import Image
+
+(FIGOUT / "zenodo").mkdir(parents=True, exist_ok=True)
+
+for var in chart_elements:
+    img = Image.open(FIGOUT / "paper" / f"{var}.png")
+    leg = Image.open(FIGOUT / "paper" / "legend.png")
+
+    ratio = img.width / leg.width
+    leg = leg.resize((img.width, int(leg.height*ratio)))
+
+    dst = Image.new('RGB', (img.width, img.height + leg.height))
+    dst.paste(img, (0, 0))
+    dst.paste(leg, (0, img.height))
+    dst.save(FIGOUT / "zenodo" / f"{var}.png")

@@ -76,7 +76,8 @@ ar6 = load_ar6_climate(cat)
 magicc = load_magicc(cat)
 
 # %%
-FIGOUT.mkdir(exist_ok=True)
+(FIGOUT / "paper").mkdir(parents=True, exist_ok=True)
+(FIGOUT / "zenodo").mkdir(parents=True, exist_ok=True)
 
 width, height = mpl.rcParams["figure.figsize"]
 fig, ax = plt.subplots(figsize=(width, height), dpi=300, constrained_layout=True)
@@ -99,18 +100,17 @@ for scen, subset in magicc.groupby('Scenario', sort=False):
 # Assign a unique label to the category-specified scenarios
 for i, (*_, subset) in enumerate(ar6.groupby(['Model', 'Scenario'])):
     label = f'{cat} scenarios' if i == 0 else '_nolegend_'
-    ax.plot(subset['Year'], subset['Value'], color='lightgray', alpha=0.5, lw=0.3, label=label, zorder=0)
+    ax.plot(subset['Year'], subset['Value'], color='gray', alpha=0.5, lw=0.2, label=label, zorder=0)
 
 ax.legend(loc='lower left')
-ax.set_xlabel('Year')
 ax.set_ylabel('Temperature [K]')
 ax.tick_params(axis='x', labelrotation=45)
 ax.tick_params(axis='x', which='minor', bottom=False, top=False)
 ax.set_xlim(2000, 2100)
 ax.set_ylim(0, 2)
 ax.set_xticks(range(2000, 2101, 10))
-ax.axhline(1.5, color='gray', ls='dashed', lw=0.5)
 
-fig.savefig(FIGOUT / "Figure1.png", bbox_inches='tight')
+fig.savefig(FIGOUT / "paper" / "Figure1.png", bbox_inches='tight')
+fig.savefig(FIGOUT / "zenodo" / "Figure1.png", bbox_inches='tight')
 plt.show()
 
