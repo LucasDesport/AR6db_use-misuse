@@ -1,4 +1,5 @@
 figures/
+venv/
 *.ipynb
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
