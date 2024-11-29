@@ -12,12 +12,12 @@ For the calculations, the code requires standard Python packages like `pandas`, 
 ## Usage and structure
 
 Run the codes step by step from 01 to 04.  
-- [`01_AR6_treatment.py`](01_AR6_treatment.py) processes the AR6 Scenarios Database from the `data` folder to extract only the variables of Table 3.2 and 3.4 of the report. The user can choose which category to analyze by filling the `category` attribute. The outputs of this code are collect in the `outputs` folder.
-- [`02_tiam-fr_vs_constraints.py`](02_tiam-fr_vs_constraints.py) processes TIAM-FR outputs from the `data` folder and AR6 data from previous code to generate a merged database in the `outputs` folder.
+- [`01_AR6_treatment.py`](01_AR6_treatment.py) processes the AR6 Scenarios Database from the `data` folder to extract only the variables of Table 3.2 and 3.4 of the report. The user can choose which category to analyze by filling the `category` attribute. The outputs of this code are collected in the `outputs` folder.
+- [`02_tiam-fr_vs_constraints.py`](02_tiam-fr_vs_constraints.py) processes both TIAM-FR outputs from the `data` folder and AR6 data from the previous code to produce a merged database in the `outputs` folder.
 - [`03_paper_fig1.py`](03_paper_fig1.py) processes the AR6 Scenarios Database and the outputs of MAGICC to plot a figure representing temperature evolution of category-specified scenarios compared to statistical scenarios.
-- [`04_paper_fig2-3.py`](04_paper_fig2-3.py) processes the database generated in `02_tiam-fr_vs_constraints.py` to plot TIAM-FR outputs against AR6 Scenarios database for a specific category and each variable selected in `01_AR6_treatment.py` and generates Figures 2 and Figure 3 of the paper.
+- [`04_paper_fig2-3.py`](04_paper_fig2-3.py) processes the database produced by `02_tiam-fr_vs_constraints.py` to plot TIAM-FR outputs against AR6 Scenarios Database for a specific category and each variable selected in `01_AR6_treatment.py` and generates Figures 2 and Figure 3 of the paper.
 
-You can interactively run these scripts as a jupyter notebooks using the `jupytext` extension by following the comments.
+You can interactively run these scripts as Jupyter Notebooks using the `jupytext` extension and by following the comments.
 
 The figures are collected in the `figures` folder.  
 Additional files available in the `models` folder contain TIMES constraints and MAGICC inputs used to generate both models outputs.
