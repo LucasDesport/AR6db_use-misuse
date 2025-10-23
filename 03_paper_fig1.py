@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.17.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -114,3 +114,5 @@ fig.savefig(FIGOUT / "paper" / "Figure1.png", bbox_inches='tight')
 fig.savefig(FIGOUT / "zenodo" / "Figure1.png", bbox_inches='tight')
 plt.show()
 
+
+# %%

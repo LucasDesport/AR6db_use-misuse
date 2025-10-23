@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.17.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -19,11 +19,17 @@
 
 # %%
 import pandas as pd
+import numpy as np
 from zipfile import ZipFile
 import pathlib
+import re
 
 DATADIR = pathlib.Path('data')
+OUTDIR1 = pathlib.Path('models/TIMES_UserConstraints')
+OUTDIR2 = pathlib.Path('models/MAGICC_Inputs')
 DATADIR.mkdir(exist_ok=True)
+OUTDIR1.mkdir(exist_ok=True)
+OUTDIR2.mkdir(exist_ok=True)
 
 
 # %%
@@ -238,14 +244,252 @@ nonnrg = process_scenarios(nonnrg).assign(Value=lambda x: x['Value'].round(0).di
 # ## CSV output
 
 # %% [markdown]
-# The file *constraints.csv* in thr output of this script becomes the input of the next script *02_tiam-fr_vs_constraints.py*
+# The file *constraints.csv* in the output of this script becomes the input of the next script *02_tiam-fr_vs_constraints.py*
 
 # %%
 dfs = {'ghg': ghg, 'lcspe': lcspe, 'fed': fed, 'esfe': esfe,
        'co2elc': co2elc, 'ccsfos': ccsfos, 'nonnrg': nonnrg}
 out = (pd.concat(dfs, names=['Variable']).reset_index('Variable')
         .pivot_table(index=['Scenario', 'Year'], columns='Variable', values='Value', sort=False))
-out.to_csv(DATADIR / 'constraints.csv')
+out.to_csv(OUTDIR1 / 'constraints.csv')
+
+# %% [markdown]
+# # Processing emission variables only
+
+# %% [markdown]
+# ## This other processing is to extract percentiles for emission variables only to be submitted to the MAGICC emulator.
+
+# %% jupyter={"source_hidden": true}
+# The following dictonnary is used in the function load_ar6_emissions so the nomenclature of the AR6 Scenarios Database matches that of MAGICC
+emission_units = {
+    "Emissions|BC": "Mt BC / yr",
+    "Emissions|CH4": "Mt CH4 / yr",
+    "Emissions|CO": "Mt CO / yr",
+    "Emissions|CO2|MAGICC AFOLU": "Mt CO2 / yr",
+    "Emissions|CO2|MAGICC Fossil and Industrial": "Mt CO2 / yr",
+    "Emissions|NH3": "Mt NH3 / yr",
+    "Emissions|NOx": "Mt NOx / yr",
+    "Emissions|OC": "Mt OC / yr",
+    "Emissions|Sulfur": "Mt SO2 / yr",
+    "Emissions|VOC": "Mt VOC / yr",
+    "Emissions|C2F6": "kt C2F6 / yr",
+    "Emissions|C3F8": "kt C3F8 / yr",
+    "Emissions|C4F10": "kt C4F10 / yr",
+    "Emissions|C5F12": "kt C5F12 / yr",
+    "Emissions|PFC|C6F14": "kt C6F14 / yr",
+    "Emissions|C7F16": "kt C7F16 / yr",
+    "Emissions|C8F18": "kt C8F18 / yr",
+    "Emissions|CCl4": "kt CCl4 / yr",
+    "Emissions|CF4": "kt CF4 / yr",
+    "Emissions|CFC11": "kt CFC11 / yr",
+    "Emissions|CFC113": "kt CFC113 / yr",
+    "Emissions|CFC114": "kt CFC114 / yr",
+    "Emissions|CFC115": "kt CFC115 / yr",
+    "Emissions|CFC12": "kt CFC12 / yr",
+    "Emissions|CH2Cl2": "kt CH2Cl2 / yr",
+    "Emissions|CH3Br": "kt CH3Br / yr",
+    "Emissions|CH3CCl3": "kt CH3CCl3 / yr",
+    "Emissions|CH3Cl": "kt CH3Cl / yr",
+    "Emissions|CHCl3": "kt CHCl3 / yr",
+    "Emissions|HCFC141b": "kt HCFC141b / yr",
+    "Emissions|HCFC142b": "kt HCFC142b / yr",
+    "Emissions|HCFC22": "kt HCFC22 / yr",
+    "Emissions|HFC125": "kt HFC125 / yr",
+    "Emissions|HFC134a": "kt HFC134a / yr",
+    "Emissions|HFC143a": "kt HFC143a / yr",
+    "Emissions|HFC152a": "kt HFC152a / yr",
+    "Emissions|HFC227ea": "kt HFC227ea / yr",
+    "Emissions|HFC23": "kt HFC23 / yr",
+    "Emissions|HFC236fa": "kt HFC236fa / yr",
+    "Emissions|HFC245fa": "kt HFC245fa / yr",
+    "Emissions|HFC32": "kt HFC32 / yr",
+    "Emissions|HFC365mfc": "kt HFC365mfc / yr",
+    "Emissions|HFC|HFC43-10": "kt HFC4310mee / yr",
+    "Emissions|Halon1202": "kt Halon1202 / yr",
+    "Emissions|Halon1211": "kt Halon1211 / yr",
+    "Emissions|Halon1301": "kt Halon1301 / yr",
+    "Emissions|Halon2402": "kt Halon2402 / yr",
+    "Emissions|N2O": "kt N2O / yr",
+    "Emissions|NF3": "kt NF3 / yr",
+    "Emissions|SF6": "kt SF6 / yr",
+    "Emissions|SO2F2": "kt SO2F2 / yr",
+    "Emissions|cC4F8": "kt cC4F8 / yr"
+}
+
 
 # %%
-out
+def load_ar6_emission_percentiles(cat):
+    """
+    Compute 5th, 50th, and 95th percentiles of AR6 emissions
+    across all models and scenarios for each variable and year.
+    Saves three CSVs (p5, p50, p95) in DATADIR.
+    """
+    archive = DATADIR / "1668008312256-AR6_Scenarios_Database_World_v1.1.csv.zip"
+    filename = "AR6_Scenarios_Database_World_v1.1.csv"
+
+    variables = ['Emissions|BC', 'Emissions|C2F6', 'Emissions|PFC|C6F14', 'Emissions|CF4', 'Emissions|CH4', 'Emissions|CO',
+            'Emissions|CO2|AFOLU', 'Emissions|CO2|Energy and Industrial Processes', 'Emissions|HFC|HFC125', 'Emissions|HFC|HFC134a',
+            'Emissions|HFC|HFC143a', 'Emissions|HFC|HFC227ea', 'Emissions|HFC|HFC23', 'Emissions|HFC|HFC245fa',
+            'Emissions|HFC|HFC32', 'Emissions|HFC|HFC43-10', 'Emissions|N2O', 'Emissions|NH3', 'Emissions|NOx',
+            'Emissions|OC', 'Emissions|SF6', 'Emissions|Sulfur', 'Emissions|VOC'
+            ]
+
+    year_cols = [str(2015)] + [str(i) for i in range(2020, 2101, 10)]
+    cols = ['Variable', 'Region', 'Unit'] + year_cols
+
+    # Import the database and metadata of scenarios and a subset of variables
+    with ZipFile(archive) as zipfile:
+        # Process database
+        cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit'] + [str(2015)] + [str(i) for i in range(2020, 2101, 10)]
+        data = pd.read_csv(zipfile.open('AR6_Scenarios_Database_World_v1.1.csv'), usecols=cols)        
+        df = data[(data['Variable'].isin(variables)) & (data['Region'] == 'World')].copy()
+
+        # Process metadata
+        cols = ['Model', 'Scenario', 'Category']
+        meta = pd.read_excel(zipfile.open('AR6_Scenarios_Database_metadata_indicators_v1.1.xlsx'), sheet_name='meta_Ch3vetted_withclimate', usecols=cols)
+
+    # Combine dataframes
+    cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit', 'Year', 'Value', 'Category']
+    df = meta.merge(df, on=['Model', 'Scenario'], how='right')
+    df = pd.melt(df, id_vars=df.columns[:6], var_name='Year', value_name='Value')
+
+    df = df[df['Category'] == cat].drop(columns='Category')
+
+    # Adjusting variables names to match MAGICC inputs template
+    df.loc[:, "Variable"] = df["Variable"].replace({
+                                "Emissions|PFC|C6F14": "Emissions|C6F14",
+                                "Emissions|CO2|AFOLU": "Emissions|CO2|MAGICC AFOLU",
+                                "Emissions|CO2|Energy and Industrial Processes": "Emissions|CO2|MAGICC Fossil and Industrial",
+                                "Emissions|HFC|HFC125": "Emissions|HFC125",
+                                "Emissions|HFC|HFC134a": "Emissions|HFC134a",
+                                "Emissions|HFC|HFC143a": "Emissions|HFC143a",
+                                "Emissions|HFC|HFC227ea": "Emissions|HFC227ea",
+                                "Emissions|HFC|HFC23": "Emissions|HFC23",
+                                "Emissions|HFC|HFC245fa": "Emissions|HFC245fa",
+                                "Emissions|HFC|HFC32": "Emissions|HFC32",
+                                "Emissions|HFC|HFC43-10": "Emissions|HFC4310mee"
+                                })
+
+    df.loc[:, "Unit"] = df["Unit"].replace({
+                               "kt HFC43-10/yr": "kt HFC4310mee / yr"
+                              })
+
+    # Pivot dataframe
+    cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit']
+    df = df.pivot_table(index=cols, columns='Year', values='Value').reset_index()
+
+    # Convert year columns to numeric
+    for col in year_cols:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    # Percentile computation
+    def percentile(col, q):
+        valid = col.dropna().to_numpy()
+        if valid.size == 0:
+            return np.nan
+        return np.percentile(valid, q)
+
+    # Group by variable and unit
+    grouped = df.groupby(['Variable', 'Unit'])[year_cols]
+
+    # Apply aggregation for each percentile
+    df_p5  = grouped.aggregate(lambda col: percentile(col, 5)).reset_index()
+    df_p50 = grouped.aggregate(lambda col: percentile(col, 50)).reset_index()
+    df_p95 = grouped.aggregate(lambda col: percentile(col, 95)).reset_index()
+
+    # Name columns properly
+    df_p5.columns  = ['Variable','Unit'] + year_cols
+    df_p50.columns = ['Variable','Unit'] + year_cols
+    df_p95.columns = ['Variable','Unit'] + year_cols
+
+    # Add metadata columns in consistent order
+    for label, df_out in zip(['p5','p50','p95'], [df_p5, df_p50, df_p95]):
+        df_out['model'] = f'AR6_{cat}'
+        df_out['region'] = 'World'
+        df_out['scenario'] = label
+        df_out.rename(columns={'Variable':'variable','Unit':'unit'}, inplace=True)
+        df_out = df_out[['model','region','scenario','unit','variable'] + year_cols]
+        # save each
+        df_out.to_csv(OUTDIR2 / f"AR6_{cat}_emissions_{label}.csv", index=False)
+
+
+# %%
+df2 = load_ar6_emission_percentiles('C1')
+
+
+# %% [markdown]
+# ## This last function can be used to extract emissions from a given scenario and model
+
+# %%
+def load_ar6_emissions(model, scen):
+    # AR6 variables to be processed
+    archive = DATADIR / "1668008312256-AR6_Scenarios_Database_World_v1.1.csv.zip"
+
+    variables = ['Emissions|BC', 'Emissions|C2F6', 'Emissions|PFC|C6F14', 'Emissions|CF4', 'Emissions|CH4', 'Emissions|CO',
+            'Emissions|CO2|AFOLU', 'Emissions|CO2|Energy and Industrial Processes', 'Emissions|HFC|HFC125', 'Emissions|HFC|HFC134a',
+            'Emissions|HFC|HFC143a', 'Emissions|HFC|HFC227ea', 'Emissions|HFC|HFC23', 'Emissions|HFC|HFC245fa',
+            'Emissions|HFC|HFC32', 'Emissions|HFC|HFC43-10', 'Emissions|N2O', 'Emissions|NH3', 'Emissions|NOx',
+            'Emissions|OC', 'Emissions|SF6', 'Emissions|Sulfur', 'Emissions|VOC'
+            ]
+
+    # Import the database and metadata of scenarios and a subset of variables
+    with ZipFile(archive) as zipfile:
+        # Process database
+        cols = ['Model', 'Scenario', 'Region', 'Variable', 'Unit'] + [str(2015)] + [str(i) for i in range(2020, 2101, 10)]
+        data = pd.read_csv(zipfile.open('AR6_Scenarios_Database_World_v1.1.csv'), usecols=cols)        
+        df = data[(data['Variable'].isin(variables)) & (data['Model'] == model) & (data['Scenario'] == scen)].copy()
+
+        # If a variable is missing, insert it and set 0 values for each period
+        df['Variable'] = df['Variable'].astype(str)
+        for var in variables:
+            if var not in df['Variable'].values:
+                year_cols = [col for col in df.columns if col.isdigit()]
+                new_row = {
+                    "Model": model,   # or use the appropriate values from df
+                    "Region": "World",
+                    "Scenario": scen,
+                    "Unit": emission_units.get(var, "Unknown variable"),
+                    "Variable": var,
+                }
+                for col in year_cols:
+                    new_row[col] = 0.0
+                    
+                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+
+        # Adjusting variables names to match MAGICC inputs template
+        df.loc[:, "Variable"] = df["Variable"].replace({
+                                    "Emissions|PFC|C6F14": "Emissions|C6F14",
+                                    "Emissions|CO2|AFOLU": "Emissions|CO2|MAGICC AFOLU",
+                                    "Emissions|CO2|Energy and Industrial Processes": "Emissions|CO2|MAGICC Fossil and Industrial",
+                                    "Emissions|HFC|HFC125": "Emissions|HFC125",
+                                    "Emissions|HFC|HFC134a": "Emissions|HFC134a",
+                                    "Emissions|HFC|HFC143a": "Emissions|HFC143a",
+                                    "Emissions|HFC|HFC227ea": "Emissions|HFC227ea",
+                                    "Emissions|HFC|HFC23": "Emissions|HFC23",
+                                    "Emissions|HFC|HFC245fa": "Emissions|HFC245fa",
+                                    "Emissions|HFC|HFC32": "Emissions|HFC32",
+                                    "Emissions|HFC|HFC43-10": "Emissions|HFC4310mee"
+                                    })
+        df.loc[:, "Unit"] = df["Unit"].replace({"Mt NO2/yr": "Mt NOx/yr"})
+
+        df = df.rename(columns={'Model': 'model', 'Region': 'region', 'Scenario': 'scenario', 'Unit': 'unit', 'Variable': 'variable'})
+
+        # Reoder columns
+        first_cols = ['model', 'region', 'scenario', 'unit', 'variable']
+        rest_cols = [col for col in df.columns if col not in first_cols]
+        df = df[first_cols + rest_cols]
+
+        df = df.sort_values(by='variable', ascending=True)
+    
+    # Sanitize arguments' names before saving
+    csv_model = re.sub(r'[^\w\-\.]+', '_', model).replace('.', 'p')
+    csv_scen  = re.sub(r'[^\w\-\.]+', '_', scen).replace('.', 'p')
+    cache = OUTDIR2 / f"AR6_{csv_model}_{csv_scen}.csv"
+
+    df.to_csv(cache, index=False)
+
+
+# %%
+load_ar6_emissions('AIM/Hub-Global 2.0','1.5C')
+
+# %%
