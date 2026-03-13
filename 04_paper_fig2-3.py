@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -21,7 +21,7 @@
 #     name: python
 #     nbconvert_exporter: python
 #     pygments_lexer: ipython3
-#     version: 3.10.13
+#     version: 3.14.3
 # ---
 
 # %% [markdown]
@@ -190,6 +190,138 @@ plt.subplots_adjust(top=1e-6, bottom=0)
 fig_legend.savefig(FIGOUT / "paper" / "legend.png", bbox_inches='tight')
 
 plt.show()
+
+# %%
+from matplotlib.lines import Line2D
+from matplotlib.patches import Rectangle
+
+width, height = mpl.rcParams["figure.figsize"]
+fig_legend, ax_legend = plt.subplots(figsize=(width, height), dpi=300)
+
+legend = {
+    '5th-95th percentile ensemble': Rectangle((0, 0), 1, 1, **kwds['stat']),
+    'Median pathway': Line2D([0], [0], **(kwds['stat'] | kwds['Median'])),
+    'IMP-Low Demand (IMP-LD)': Line2D([0], [0], **(kwds['imp'] | kwds['IMP-LD'])),
+
+    'Ensemble of GHG-constrained pathways': Rectangle((0, 0), 1, 1, **kwds['emissions']),
+    'Full combination of median GHG-constrained pathways': Line2D([0], [0], **(kwds['emissions'] | kwds['tab2'])),
+    'IMP-Sustainable Pathway (IMP-SP) ': Line2D([0], [0], **(kwds['imp'] | kwds['IMP-SP'])),
+
+    'Ensemble of energy-constrained pathways': Rectangle((0, 0), 1, 1, **kwds['energy']),
+    'Full combination of median energy-constrained pathways': Line2D([0], [0], **(kwds['energy'] | kwds['tab4'])),
+    'IMP-Renewables (IMP-Ren)': Line2D([0], [0], **(kwds['imp'] | kwds['IMP-Ren'])),
+}
+
+ax_legend.legend(handles=legend.values(), labels=legend.keys(), loc='center', ncol=3)
+ax_legend.axis('off')
+plt.subplots_adjust(top=1e-6, bottom=0)
+fig_legend.savefig(FIGOUT / "paper" / "legend.png", bbox_inches='tight')
+
+plt.show()
+
+# %%
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Rectangle
+
+# --- Create legend figure ---
+width, height = mpl.rcParams["figure.figsize"]
+fig_legend, ax_legend = plt.subplots(figsize=(width, height), dpi=300)
+
+legend = {
+    '5th-95th percentile ensemble': Rectangle((0, 0), 1, 1, **kwds['stat']),
+    'Median pathway': Line2D([0], [0], **(kwds['stat'] | kwds['Median'])),
+    'IMP-Low Demand (IMP-LD)': Line2D([0], [0], **(kwds['imp'] | kwds['IMP-LD'])),
+
+    'Ensemble of GHG-constrained pathways': Rectangle((0, 0), 1, 1, **kwds['emissions']),
+    'Full combination of median GHG-constrained pathways': Line2D([0], [0], **(kwds['emissions'] | kwds['tab2'])),
+    'IMP-Sustainable Pathway (IMP-SP)': Line2D([0], [0], **(kwds['imp'] | kwds['IMP-SP'])),
+
+    'Ensemble of energy-constrained pathways': Rectangle((0, 0), 1, 1, **kwds['energy']),
+    'Full combination of median energy-constrained pathways': Line2D([0], [0], **(kwds['energy'] | kwds['tab4'])),
+    'IMP-Renewables (IMP-Ren)': Line2D([0], [0], **(kwds['imp'] | kwds['IMP-Ren'])),
+}
+
+# --- Draw legend ---
+leg = ax_legend.legend(
+    handles=legend.values(),
+    labels=legend.keys(),
+    loc='center',
+    ncol=3
+)
+
+ax_legend.axis('off')
+plt.subplots_adjust(top=1e-6, bottom=0)
+
+# --- Force draw so legend layout is finalized ---
+fig_legend.canvas.draw()
+renderer = fig_legend.canvas.get_renderer()
+
+texts = leg.get_texts()
+handles = leg.legend_handles
+
+# Indices to group (GHG + energy, 2 rows, right side)
+indices = [3, 4, 6, 7]
+
+bboxes = []
+
+for i in indices:
+    # Text bbox
+    bboxes.append(texts[i].get_window_extent(renderer=renderer))
+    # Handle bbox (THIS is what was missing)
+    bboxes.append(handles[i].get_window_extent(renderer=renderer))
+
+# Union of all bboxes (display coordinates)
+x0 = min(b.x0 for b in bboxes)
+y0 = min(b.y0 for b in bboxes)
+x1 = max(b.x1 for b in bboxes)
+y1 = max(b.y1 for b in bboxes)
+
+# Convert to axes coordinates
+inv = ax_legend.transAxes.inverted()
+(x0, y0) = inv.transform((x0, y0))
+(x1, y1) = inv.transform((x1, y1))
+
+# Padding
+pad_x = 0.02
+pad_y = 0.02
+y_shift = 4000
+
+rect = Rectangle(
+    (x0 - pad_x, y0 - pad_y),
+    (x1 - x0) + 2 * pad_x,
+    (y1 - y0) + 2 * pad_y + y_shift,
+    linewidth=0.5,
+    linestyle='--',
+    edgecolor='black',
+    facecolor='none',
+    transform=ax_legend.transAxes,
+    clip_on=False
+)
+
+ax_legend.add_patch(rect)
+
+# Label
+ax_legend.text(
+    0.5 * (x0 + x1),
+    y1 + 2.0 * pad_y + y_shift,
+    "TIAM-FR statistical pathways",
+    ha='center',
+    va='bottom',
+    transform=ax_legend.transAxes,
+    fontsize=8,
+    fontweight='bold'
+)
+
+# --- Save ---
+fig_legend.savefig(
+    FIGOUT / "paper" / "legend.png",
+    bbox_inches='tight'
+)
+
+plt.show()
+
 
 # %%
 from PIL import Image
